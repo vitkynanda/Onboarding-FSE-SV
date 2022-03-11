@@ -2,18 +2,18 @@ package helpers
 
 import "go-api/models/dto"
 
-func ResponseError(msg string, status int) dto.Response { 
+func ResponseError(status string, err interface{}) dto.Response { 
 	return dto.Response{
-		Message: msg,
-		StatusCode: status,
+		Status: status,
+		Error: err,
 		Data: nil,
 	}
 }
 
-func ResponseSuccess(msg string, status int, data interface{}) dto.Response { 
+func ResponseSuccess(status string, err interface{}, data interface{}) dto.Response { 
 	return dto.Response{
-		Message: msg,
-		StatusCode: status,
+		Status: status,
+		Error: err,
 		Data: data,
 	}
 }

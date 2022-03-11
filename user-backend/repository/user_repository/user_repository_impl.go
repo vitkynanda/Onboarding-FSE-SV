@@ -10,17 +10,13 @@ import (
 
 func (repo *userRepository) GetAllUsers() ([]entity.User, error) {
 	users := []entity.User{}
-
 	err := repo.mysqlConnection.Find(&users).Error
-
 	if err != nil {
 		return nil, err
 	}
-
 	if  len(users) <= 0 {
 		return nil, gorm.ErrRecordNotFound
 	}
-
 	return users, nil
 }
 
@@ -35,15 +31,25 @@ func (repo *userRepository) GetUserById(id string) (*entity.User, error) {
 	return &user, nil
 }
 
-func (repo *userRepository) CreateNewUser(user entity.User) (*entity.User, error){
-	id := uuid.New()
-	user.Id = id
-
-	if err := repo.mysqlConnection.Create(&user).Error; err != nil {
-		return nil, err
+func (repo *userRepository) CreateNewUser(user entity.User) (*entity.User, *entity.Role, error){
+	user.Id = uuid.New()
+	user.RoleId = uuid.New()
+	
+	role := entity.Role{
+		Id: user.RoleId,
+		Title: "viewer",
+		Active: true,
 	}
 
-	return &user, nil
+	if err := repo.mysqlConnection.Create(&user).Error; err != nil {
+		return nil, nil, err
+	}
+
+	if err := repo.mysqlConnection.Create(&role).Error; err != nil {
+		return nil, nil, err
+	}
+
+	return &user, &role, nil
 }
 
 func (repo *userRepository) UpdateUserData(user entity.User, id string ) (*entity.User, error){

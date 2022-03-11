@@ -12,18 +12,14 @@ import (
 func (user *userUsecase) GetAllUsers() dto.Response {
 	userlist, err := user.userRepo.GetAllUsers()
 	response := []dto.UserList{}
-
 	for _, user := range userlist {
-
-	role := dto.Role{Id:user.RoleId}
-
+	// role := dto.Role{Id:user.RoleId}
 	responseData := dto.UserList{
 		Id : user.Id, 
 		Name : user.Name, 
-		Role: role,
+		// Role: role,
 		Active : user.Active,
-	}
-		
+	}	
 		response = append(response, responseData)
 	}
 
@@ -47,28 +43,22 @@ func (user *userUsecase) GetUserById(id string) dto.Response {
 }
 
 func (user *userUsecase) CreateNewUser(newUser dto.User) dto.Response {
-	
-
 	userInsert := entity.User{
 		Id: newUser.Id,
+		Name: newUser.Name,
 		Email: newUser.Email,
 		Personal_number: newUser.Personal_number,
-		Active: newUser.Active,
+		Password: newUser.Password,
 	}
 
-	// title :="viewer"
-	// InsertRole := entity.Role{
-	// 	Title: title ,
-	// }
-		
-	userData, err := user.userRepo.CreateNewUser(userInsert)
+	userData, _, err := user.userRepo.CreateNewUser(userInsert)
 	
 	 if err != nil {
-		return helpers.ResponseError("Internal server error", 500)
+		return helpers.ResponseError("Internal server error", err)
 	}
 
-	newUser.Id = userData.Id
-	return helpers.ResponseSuccess("New user created successfully", 200, newUser)
+	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{
+		"id": userData.Id} )
 }
 
 func (user *userUsecase) UpdateUserData(userUpdate dto.User, id string) dto.Response {
