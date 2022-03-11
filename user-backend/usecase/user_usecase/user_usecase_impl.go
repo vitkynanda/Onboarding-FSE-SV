@@ -35,26 +35,30 @@ func (user *userUsecase) GetUserById(id string) dto.Response {
 	userData, err := user.userRepo.GetUserById(id)
 	
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return helpers.ResponseError("Data not found", 404)
+		return helpers.ResponseError("Data not found", nil)
 	} else if err != nil {
-		return helpers.ResponseError("Internal server error", 500)
+		return helpers.ResponseError("Internal server error", nil)
 	}
 
-	// role := dto.Role{
-	// 	Id: userData.RoleID, 
-	// 	Title: userData.Title,
-	// }
-
-	userResponse := dto.User{
-		Id: userData.ID,
-		Email: userData.Email,	
+	role := dto.Role{
+		Id: userData.RoleID, 
+		Title: userData.Title,
 	}
-	return helpers.ResponseSuccess("Get user successfully", 200, userResponse)
+
+	userResponse := map[string]interface{}{
+		"id": userData.ID,
+		"name": userData.Name,
+		"email": userData.Email,
+		"role": role,	
+		"personalNumber": userData.Personal_number,
+		"active": userData.Active,
+	}
+	return helpers.ResponseSuccess("ok", 200, userResponse)
 }
 
 func (user *userUsecase) CreateNewUser(newUser dto.User) dto.Response {
 	userInsert := entity.User{
-		// ID: newUser.Id,
+		ID: newUser.Id,
 		Name: newUser.Name,
 		Email: newUser.Email,
 		Personal_number: newUser.Personal_number,

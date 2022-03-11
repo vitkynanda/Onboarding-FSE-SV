@@ -9,6 +9,6 @@ type User struct {
 	Email           string `json:"email" binding:"required"`
 	Active          bool   `json:"active" binding:"required"`
 	RoleID          string `json:"roleId" binding:"required"`
-	// Title           string `json:"title" gorm:"-"`
+	Title           string `json:"title" gorm:"-"`
 	// Role            Role   `gorm:"foreignKey:RoleID"`
 }
