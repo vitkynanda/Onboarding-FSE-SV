@@ -12,6 +12,7 @@ import (
 
 func (res *userDelivery) GetAllUsers(c *gin.Context) {
 	response := res.usecase.GetAllUsers()
+	// fmt.Printf("%+v", response)
 	if (response.Status != "ok") {
 		c.JSON(http.StatusInternalServerError, gin.H{"message" : "Internal server error"})
 		return

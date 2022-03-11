@@ -1,9 +1,7 @@
 package entity
 
-import "github.com/google/uuid"
-
 type Role struct {
-	Id     uuid.UUID `json:"id" `
-	Title  string    `json:"title" `
-	Active bool    	 `json:"active" binding:"required"`
+	ID     string `json:"id" gorm:"primaryKey, type:varchar(50)"`
+	Title  string `json:"title" `
+	Active bool   `json:"active" binding:"required"`
 }

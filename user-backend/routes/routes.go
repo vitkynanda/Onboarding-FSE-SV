@@ -12,7 +12,6 @@ import (
 )	
 
 func HandlerRequest() {
-	
 	connection := connection.Connect()
 	userRepository := user_repository.GetUserRepository(connection)
 	userUsecase := user_usecase.GetUserUsecase(userRepository)

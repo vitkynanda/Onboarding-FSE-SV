@@ -7,7 +7,7 @@ import (
 )
 
 type UserRepository interface {
-	GetAllUsers() ([]entity.User, error)
+	GetAllUsers() ([]entity.UserList, error)
 	GetUserById(string) (*entity.User, error) 
 	CreateNewUser(entity.User) (*entity.User, *entity.Role, error)
 	UpdateUserData(entity.User, string) (*entity.User, error) 

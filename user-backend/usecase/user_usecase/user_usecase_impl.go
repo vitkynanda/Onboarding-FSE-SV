@@ -13,22 +13,22 @@ func (user *userUsecase) GetAllUsers() dto.Response {
 	userlist, err := user.userRepo.GetAllUsers()
 	response := []dto.UserList{}
 	for _, user := range userlist {
-	// role := dto.Role{Id:user.RoleId}
+	role := dto.Role{Id:user.RoleID, Title: user.Title}
 	responseData := dto.UserList{
-		Id : user.Id, 
+		Id : user.ID, 
 		Name : user.Name, 
-		// Role: role,
+		Role: role,
 		Active : user.Active,
 	}	
 		response = append(response, responseData)
 	}
 
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return helpers.ResponseError("Data not found", 404)
+		return helpers.ResponseError("Data not found", err)
 	} else if err != nil {
-		return helpers.ResponseError("Internal server error", 500)
+		return helpers.ResponseError("Internal server error", err)
 	}
-	return helpers.ResponseSuccess("Get all users successfully", 200, response)
+	return helpers.ResponseSuccess("ok", nil, response)
 }
 
 func (user *userUsecase) GetUserById(id string) dto.Response {
@@ -39,12 +39,22 @@ func (user *userUsecase) GetUserById(id string) dto.Response {
 	} else if err != nil {
 		return helpers.ResponseError("Internal server error", 500)
 	}
-	return helpers.ResponseSuccess("Get user successfully", 200, userData)
+
+	// role := dto.Role{
+	// 	Id: userData.RoleID, 
+	// 	Title: userData.Title,
+	// }
+
+	userResponse := dto.User{
+		Id: userData.ID,
+		Email: userData.Email,	
+	}
+	return helpers.ResponseSuccess("Get user successfully", 200, userResponse)
 }
 
 func (user *userUsecase) CreateNewUser(newUser dto.User) dto.Response {
 	userInsert := entity.User{
-		Id: newUser.Id,
+		// ID: newUser.Id,
 		Name: newUser.Name,
 		Email: newUser.Email,
 		Personal_number: newUser.Personal_number,
@@ -58,13 +68,13 @@ func (user *userUsecase) CreateNewUser(newUser dto.User) dto.Response {
 	}
 
 	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{
-		"id": userData.Id} )
+		"id": userData.ID} )
 }
 
 func (user *userUsecase) UpdateUserData(userUpdate dto.User, id string) dto.Response {
 	
 	userInsert := entity.User{
-		Id: userUpdate.Id,
+		// ID: userUpdate.Id,
 		Email: userUpdate.Email,
 		Personal_number: userUpdate.Personal_number,
 		Active: userUpdate.Active,
