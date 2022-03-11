@@ -20,9 +20,9 @@ func HandlerRequest() {
 
 	router.Use(cors.Default())
 	router.GET("/users", userDelivery.GetAllUsers )	
-	router.GET("/user/:id", userDelivery.GetUserById )	
-	router.POST("/user", userDelivery.CreateNewUser )	
-	router.PUT("/user/:id", userDelivery.UpdateUserData )
-	router.DELETE("/user/:id", userDelivery.DeleteUserById )
+	router.GET("/users/:id", userDelivery.GetUserById )	
+	router.POST("/users", userDelivery.CreateNewUser )	
+	router.PUT("/users/:id", userDelivery.UpdateUserData )
+	router.DELETE("/users/:id", userDelivery.DeleteUserById )
 	router.Run(":8001")
 }

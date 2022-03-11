@@ -35,9 +35,9 @@ func (user *userUsecase) GetUserById(id string) dto.Response {
 	userData, err := user.userRepo.GetUserById(id)
 	
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return helpers.ResponseError("Data not found", nil)
+		return helpers.ResponseError("Data not found", err)
 	} else if err != nil {
-		return helpers.ResponseError("Internal server error", nil)
+		return helpers.ResponseError("Internal server error", err)
 	}
 
 	role := dto.Role{
@@ -53,7 +53,7 @@ func (user *userUsecase) GetUserById(id string) dto.Response {
 		"personalNumber": userData.Personal_number,
 		"active": userData.Active,
 	}
-	return helpers.ResponseSuccess("ok", 200, userResponse)
+	return helpers.ResponseSuccess("ok", nil, userResponse)
 }
 
 func (user *userUsecase) CreateNewUser(newUser dto.User) dto.Response {
@@ -78,21 +78,24 @@ func (user *userUsecase) CreateNewUser(newUser dto.User) dto.Response {
 func (user *userUsecase) UpdateUserData(userUpdate dto.User, id string) dto.Response {
 	
 	userInsert := entity.User{
-		// ID: userUpdate.Id,
+		Name: userUpdate.Name,
 		Email: userUpdate.Email,
 		Personal_number: userUpdate.Personal_number,
 		Active: userUpdate.Active,
+		Password: userUpdate.Password,
+		RoleID: userUpdate.Id,
 	}
 		
 	_, err := user.userRepo.UpdateUserData(userInsert, id)
 	 
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return helpers.ResponseError("Data not found", 404)
+		return helpers.ResponseError("Data not found", err)
 	} else if err != nil {
-		return helpers.ResponseError("Internal server error", 500)
+		return helpers.ResponseError("Internal server error", err)
 	}
 
-	return helpers.ResponseSuccess("User data updated successfully", 200, userUpdate)
+	userUpdate.Id = id
+	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{"id": id})
 }
 
 func (user *userUsecase) DeleteUserById(id string) dto.Response {
@@ -100,9 +103,9 @@ func (user *userUsecase) DeleteUserById(id string) dto.Response {
  err := user.userRepo.DeleteUserById(id)
  
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return helpers.ResponseError("Data not found", 404)
+		return helpers.ResponseError("Data not found", err)
 	} else if err != nil {
-		return helpers.ResponseError("Internal server error", 500)
+		return helpers.ResponseError("Internal server error", err)
 	}
-	return helpers.ResponseSuccess("User deleted successfully", 200, nil)
+	return helpers.ResponseSuccess("ok", nil, nil)
 }

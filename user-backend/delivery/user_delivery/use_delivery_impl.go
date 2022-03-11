@@ -50,8 +50,7 @@ func (res *userDelivery) CreateNewUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
-	c.JSON(http.StatusOK, response)
-	
+	c.JSON(http.StatusOK, response)	
 }	
 
 func (res *userDelivery) UpdateUserData(c *gin.Context) {
@@ -65,7 +64,7 @@ func (res *userDelivery) UpdateUserData(c *gin.Context) {
 		} 
 		
 		if len(errorMessages) > 0 {
-			errorRes := helpers.ResponseError("Invalid Input", 400)
+			errorRes := helpers.ResponseError("Invalid Input", nil)
 			c.JSON(http.StatusBadRequest, errorRes)
 			return
 		}

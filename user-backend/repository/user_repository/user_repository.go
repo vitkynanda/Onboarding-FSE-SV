@@ -8,12 +8,11 @@ import (
 
 type UserRepository interface {
 	GetAllUsers() ([]entity.UserList, error)
-	GetUserById(string) (*entity.User, error) 
+	GetUserById(string) (*entity.UserDetail, error) 
 	CreateNewUser(entity.User) (*entity.User, *entity.Role, error)
 	UpdateUserData(entity.User, string) (*entity.User, error) 
 	DeleteUserById( string) error
 }
-
 
 type userRepository struct {
 	mysqlConnection *gorm.DB
