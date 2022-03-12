@@ -32,29 +32,6 @@ export async function login(body, options) {
 }
 /** 此处后端没有提供注释 GET /api/notices */
 
-export async function svLogin(body, options) {
-  return request('/api/login/account', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
-    ...(options || {}),
-  });
-}
-
-export async function svRegister(body, options) {
-  return request('/api/login/account', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
-    ...(options || {}),
-  });
-}
-/** 此处后端没有提供注释 GET /api/notices */
-
 export async function getNotices(options) {
   return request('/api/notices', {
     method: 'GET',

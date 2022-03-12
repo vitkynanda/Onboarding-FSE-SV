@@ -17,8 +17,7 @@ const Welcome = () => {
   return (
     <PageContainer>
       <Card>
-        <div>Sharing Vision User Data</div>
-        {/* <Alert
+        <Alert
           message={intl.formatMessage({
             id: 'pages.welcome.alertMessage',
             defaultMessage: 'Faster and stronger heavy-duty components have been released.',
@@ -57,7 +56,7 @@ const Welcome = () => {
             <FormattedMessage id="pages.welcome.link" defaultMessage="Welcome" />
           </a>
         </Typography.Text>
-        <CodePreview>yarn add @ant-design/pro-layout</CodePreview> */}
+        <CodePreview>yarn add @ant-design/pro-layout</CodePreview>
       </Card>
     </PageContainer>
   );

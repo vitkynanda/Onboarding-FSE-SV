@@ -163,6 +163,7 @@ export default {
       success: true,
     });
   },
+
   'POST /api/register': (req, res) => {
     res.send({
       status: 'ok',

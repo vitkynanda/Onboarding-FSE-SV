@@ -11,7 +11,7 @@ import React, { useState } from 'react';
 import { ProFormCaptcha, ProFormCheckbox, ProFormText, LoginForm } from '@ant-design/pro-form';
 import { useIntl, history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
-import { svLogin } from '@/services/ant-design-pro/api';
+import { login } from '@/services/ant-design-pro/api';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 import styles from './index.less';
 
@@ -43,7 +43,7 @@ const Login = () => {
   const handleSubmit = async (values) => {
     try {
       // 登录
-      const msg = await svLogin({ ...values, type });
+      const msg = await login({ ...values, type });
 
       if (msg.status === 'ok') {
         const defaultLoginSuccessMessage = intl.formatMessage({
@@ -81,8 +81,25 @@ const Login = () => {
       </div>
       <div className={styles.content}>
         <LoginForm
+          logo={<img alt="logo" src="/logo.svg" />}
+          title="Ant Design"
+          subTitle={intl.formatMessage({
+            id: 'pages.layouts.userLayout.title',
+          })}
+          initialValues={{
+            autoLogin: true,
+          }}
+          actions={[
+            <FormattedMessage
+              key="loginWith"
+              id="pages.login.loginWith"
+              defaultMessage="其他登录方式"
+            />,
+            <AlipayCircleOutlined key="AlipayCircleOutlined" className={styles.icon} />,
+            <TaobaoCircleOutlined key="TaobaoCircleOutlined" className={styles.icon} />,
+            <WeiboCircleOutlined key="WeiboCircleOutlined" className={styles.icon} />,
+          ]}
           onFinish={async (values) => {
-            console.log(values);
             await handleSubmit(values);
           }}
         >
@@ -94,20 +111,13 @@ const Login = () => {
                 defaultMessage: '账户密码登录',
               })}
             />
-            {/* <Tabs.TabPane
-              key="register"
-              tab={intl.formatMessage({
-                id: 'pages.login.registerAccount.tab',
-                defaultMessage: '账户密码登录',
-              })}
-            /> */}
-            {/* <Tabs.TabPane
+            <Tabs.TabPane
               key="mobile"
               tab={intl.formatMessage({
                 id: 'pages.login.phoneLogin.tab',
                 defaultMessage: '手机号登录',
               })}
-            /> */}
+            />
           </Tabs>
 
           {status === 'error' && loginType === 'account' && (
@@ -166,57 +176,9 @@ const Login = () => {
               />
             </>
           )}
-          {/* {type === 'register' && (
-            <>
-              <ProFormText
-                name="username"
-                fieldProps={{
-                  size: 'large',
-                  prefix: <UserOutlined className={styles.prefixIcon} />,
-                }}
-                placeholder={intl.formatMessage({
-                  id: 'pages.login.username.placeholder',
-                  defaultMessage: '用户名: admin or user',
-                })}
-                rules={[
-                  {
-                    required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.username.required"
-                        defaultMessage="请输入用户名!"
-                      />
-                    ),
-                  },
-                ]}
-              />
-              <ProFormText.Password
-                name="password"
-                fieldProps={{
-                  size: 'large',
-                  prefix: <LockOutlined className={styles.prefixIcon} />,
-                }}
-                placeholder={intl.formatMessage({
-                  id: 'pages.login.password.placeholder',
-                  defaultMessage: '密码: ant.design',
-                })}
-                rules={[
-                  {
-                    required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.password.required"
-                        defaultMessage="请输入密码！"
-                      />
-                    ),
-                  },
-                ]}
-              />
-            </>
-          )} */}
 
           {status === 'error' && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
-          {/* {type === 'mobile' && (
+          {type === 'mobile' && (
             <>
               <ProFormText
                 fieldProps={{
@@ -299,7 +261,7 @@ const Login = () => {
                 }}
               />
             </>
-          )} */}
+          )}
           <div
             style={{
               marginBottom: 24,
