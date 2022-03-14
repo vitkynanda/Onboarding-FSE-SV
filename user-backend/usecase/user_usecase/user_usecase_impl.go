@@ -76,16 +76,14 @@ func (user *userUsecase) CreateNewUser(newUser dto.User) dto.Response {
 }
 
 func (user *userUsecase) UpdateUserData(userUpdate dto.User, id string) dto.Response {
-	
 	userInsert := entity.User{
 		Name: userUpdate.Name,
 		Email: userUpdate.Email,
 		Personal_number: userUpdate.Personal_number,
 		Active: userUpdate.Active,
 		Password: userUpdate.Password,
-		RoleID: userUpdate.Id,
+		RoleID: userUpdate.Role.Id,
 	}
-		
 	_, err := user.userRepo.UpdateUserData(userInsert, id)
 	 
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {

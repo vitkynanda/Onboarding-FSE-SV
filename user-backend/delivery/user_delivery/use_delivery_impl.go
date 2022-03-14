@@ -57,19 +57,22 @@ func (res *userDelivery) UpdateUserData(c *gin.Context) {
   	id := c.Param("id")
 	request := dto.User{}
 	if err := c.ShouldBindJSON(&request); err != nil {
-		errorMessages :=  []string{}
-		for _, e :=  range err.(validator.ValidationErrors) {
-			errorMessage := fmt.Sprintf("Error on Field %s, condition: %s", e.Field(), e.ActualTag())
-			errorMessages = append(errorMessages,  errorMessage)
-		} 
+		// errorMessages :=  []string{}
+		// for _, e :=  range err.(validator.ValidationErrors) {
+		// 	errorMessage := fmt.Sprintf("Error on Field %s, condition: %s", e.Field(), e.ActualTag())
+		// 	errorMessages = append(errorMessages,  errorMessage)
+		// } 
 		
-		if len(errorMessages) > 0 {
-			errorRes := helpers.ResponseError("Invalid Input", nil)
-			c.JSON(http.StatusBadRequest, errorRes)
-			return
-		}
-
+		// if len(errorMessages) > 0 {
+		// 	errorRes := helpers.ResponseError("Invalid Input", nil)
+		// 	c.JSON(http.StatusBadRequest, errorRes)
+		// 	return
+		// }
+		errorRes := helpers.ResponseError("Invalid Input", nil)
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
 	}
+
 	response := res.usecase.UpdateUserData(request, id)
 	if (response.Status != "ok") {
 		c.JSON(http.StatusInternalServerError, response)

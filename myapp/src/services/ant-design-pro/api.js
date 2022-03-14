@@ -71,3 +71,9 @@ export async function removeRule(options) {
     ...(options || {}),
   });
 }
+export async function removeUser(options) {
+  return request('http://localhost:8001', {
+    method: 'DELETE',
+    ...(options || {}),
+  });
+}

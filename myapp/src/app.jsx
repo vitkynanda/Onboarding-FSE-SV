@@ -8,6 +8,7 @@ import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import defaultSettings from '../config/defaultSettings';
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
+const registerPath = '/user/register';
 /** 获取用户信息比较慢的时候会展示一个 loading */
 
 export const initialStateConfig = {
@@ -23,13 +24,18 @@ export async function getInitialState() {
       const msg = await queryCurrentUser();
       return msg.data;
     } catch (error) {
-      history.push(loginPath);
+      console.log(location.pathname);
+      if (location.pathname == loginPath) {
+        history.push(loginPath);
+        return;
+      }
+      history.push(registerPath);
     }
 
     return undefined;
   }; // 如果是登录页面，不执行
 
-  if (history.location.pathname !== loginPath) {
+  if (history.location.pathname !== loginPath || registerPath) {
     const currentUser = await fetchUserInfo();
     return {
       fetchUserInfo,
@@ -55,7 +61,9 @@ export const layout = ({ initialState, setInitialState }) => {
     onPageChange: () => {
       const { location } = history; // 如果没有登录，重定向到 login
 
-      if (!initialState?.currentUser && location.pathname !== loginPath) {
+      if (!initialState?.currentUser && location.pathname == registerPath) {
+        history.push(registerPath);
+      } else if (!initialState?.currentUser && location.pathname !== loginPath) {
         history.push(loginPath);
       }
     },

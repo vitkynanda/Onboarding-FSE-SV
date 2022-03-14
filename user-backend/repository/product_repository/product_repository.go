@@ -1,7 +1,25 @@
 package product_repository
 
-type ProductRepository interface{}
+import (
+	"go-api/models/entity"
 
-type productRepository struct{}
+	"gorm.io/gorm"
+)
 
-func GetProductRepository() {}
+type ProductRepository interface {
+	GetAllProducts() ([]entity.Product, error)
+	GetProductById(string) (*entity.Product, error)
+	CreateNewProduct(entity.Product)(*entity.Product, error)
+	UpdateProductData(entity.Product, string) (*entity.Product, error) 
+	DeleteProductById(string) error
+}
+
+type productRepository struct{
+	mysqlConnection *gorm.DB
+}
+
+func GetProductRepository(mysqlConn *gorm.DB) ProductRepository{
+	return &productRepository{
+		mysqlConnection: mysqlConn,
+	}
+}
