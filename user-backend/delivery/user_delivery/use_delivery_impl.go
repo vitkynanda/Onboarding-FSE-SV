@@ -1,13 +1,11 @@
 package user_delivery
 
 import (
-	"fmt"
 	"go-api/helpers"
 	"go-api/models/dto"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 func (res *userDelivery) GetAllUsers(c *gin.Context) {
@@ -33,17 +31,20 @@ func (res *userDelivery) GetUserById(c *gin.Context) {
 func (res *userDelivery) CreateNewUser(c *gin.Context) {
 	request := dto.User{}
 	if err := c.ShouldBindJSON(&request); err != nil {
-		errorMessages :=  []string{}
-		for _, e :=  range err.(validator.ValidationErrors) {
-			errorMessage := fmt.Sprintf("Error on Field %s, condition: %s", e.Field(), e.ActualTag())
-			errorMessages = append(errorMessages,  errorMessage)
-		} 
+		// errorMessages :=  []string{}
+		// for _, e :=  range err.(validator.ValidationErrors) {
+		// 	errorMessage := fmt.Sprintf("Error on Field %s, condition: %s", e.Field(), e.ActualTag())
+		// 	errorMessages = append(errorMessages,  errorMessage)
+		// } 
 
-		if len(errorMessages) > 0 {
-			errorRes := helpers.ResponseError("Invalid Input", 400)
+		// if len(errorMessages) > 0 {
+		// 	errorRes := helpers.ResponseError("Invalid Input", errorMessages)
+		// 	c.JSON(http.StatusBadRequest, errorRes)
+		// 	return
+		// }
+		errorRes := helpers.ResponseError("Bad Request", err)
 			c.JSON(http.StatusBadRequest, errorRes)
 			return
-		}
 	}
 	response := res.usecase.CreateNewUser(request)
 	if (response.Status != "ok") {
@@ -68,7 +69,7 @@ func (res *userDelivery) UpdateUserData(c *gin.Context) {
 		// 	c.JSON(http.StatusBadRequest, errorRes)
 		// 	return
 		// }
-		errorRes := helpers.ResponseError("Invalid Input", nil)
+		errorRes := helpers.ResponseError("Bad Request", err)
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
