@@ -2,6 +2,7 @@ package user_repository
 
 import (
 	"fmt"
+	"go-api/helpers"
 	"go-api/models/entity"
 
 	"github.com/google/uuid"
@@ -35,20 +36,18 @@ func (repo *userRepository) GetUserById(id string) (*entity.UserDetail, error) {
 }
 
 func (repo *userRepository) CreateNewUser(user entity.User) (*entity.User, *entity.Role, error){
+	role := entity.Role{}
 	user.ID = uuid.New().String()
-	user.RoleID = uuid.New().String()
+	hash,_ := helpers.HashPassword(user.Password)
+	user.Password = hash
 	
-	role := entity.Role{
-		ID: user.RoleID,
-		Title: "viewer",
-		Active: true,
-	}
-
-	if err := repo.mysqlConnection.Create(&user).Error; err != nil {
+	if err := repo.mysqlConnection.Where("title = ?", "viewer").Find(&role).Error; err != nil {
 		return nil, nil, err
 	}
 
-	if err := repo.mysqlConnection.Create(&role).Error; err != nil {
+	user.RoleID = role.ID
+
+	if err := repo.mysqlConnection.Create(&user).Error; err != nil {
 		return nil, nil, err
 	}
 
