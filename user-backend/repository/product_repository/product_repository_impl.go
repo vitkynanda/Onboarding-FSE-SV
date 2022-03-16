@@ -40,20 +40,19 @@ func (repo *productRepository) GetProductById(id string) (*entity.ProductDetail,
 	productDetail.Description = product.Description
 	productDetail.Status = product.Status 
 
-	err := repo.mysqlConnection.Where("name IN ?", []string{product.MakerID, product.CheckerID, product.MakerID}).Find(&users).Error;
+	err := repo.mysqlConnection.Where("id IN ?", []string{product.MakerID, product.CheckerID, product.SignerID}).Find(&users).Error;
 	if err != nil {
 		return nil, err
 	}
 
-	for i, user := range users {
-		if (i == 0) {
-			productDetail.MakerID = user.ID
+	fmt.Println(users)
+
+	for _, user := range users {
+		if (user.ID == productDetail.MakerID) {
 			productDetail.MakerName = user.Name
-		} else if (i == 1){
-			productDetail.CheckerID = user.ID
+		} else if (user.ID == productDetail.CheckerID){
 			productDetail.CheckerName = user.Name
-		} else {
-			productDetail.SignerID = user.ID
+		} else if (user.ID == productDetail.SignerID){
 			productDetail.SignerName = user.Name
 		}
 	}
@@ -76,16 +75,19 @@ func (repo *productRepository) CreateNewProduct(product entity.Product) (*entity
 func (repo *productRepository) UpdateProductData(product entity.Product, id string, actionType string) (*entity.Product, error){
 	switch actionType {
 	case "published" :
-		if err := repo.mysqlConnection.Model(&product).Where("id = ?", id).Updates(map[string]interface{}{"name": product.Name, "description": product.Description,"signer_id": "system", "status":"active"}).Error; err != nil {
-				return nil, err
+		result := repo.mysqlConnection.Model(&product).Where("id = ?", id).Updates(map[string]interface{}{"name": product.Name, "description": product.Description,"signer_id": "system", "status":"active"})
+		if result.RowsAffected == 0 {
+				return nil, gorm.ErrRecordNotFound
 			}
 	case "checked" :
-		if err := repo.mysqlConnection.Model(&product).Where("id = ?", id).Updates(map[string]interface{}{"name": product.Name, "description": product.Description,"checker_id": "system"}).Error; err != nil {
-				return nil, err
-			}
+		result := repo.mysqlConnection.Model(&product).Where("id = ?", id).Updates(map[string]interface{}{"name": product.Name, "description": product.Description,"checker_id": "system"})
+		if result.RowsAffected == 0 {
+				return nil, gorm.ErrRecordNotFound
+		}
 	default :
-		if err := repo.mysqlConnection.Model(&product).Where("id = ?", id).Updates(map[string]interface{}{"name": product.Name, "description": product.Description}).Error; err != nil {
-			return nil, err
+		 result := repo.mysqlConnection.Model(&product).Where("id = ?", id).Updates(map[string]interface{}{"name": product.Name, "description": product.Description}); 
+		if result.RowsAffected == 0 {
+			return nil, gorm.ErrRecordNotFound
 		}			
 	}
 

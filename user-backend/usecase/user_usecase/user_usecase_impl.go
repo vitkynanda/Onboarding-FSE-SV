@@ -72,7 +72,7 @@ func (user *userUsecase) CreateNewUser(newUser dto.User) dto.Response {
 	}
 
 	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{
-		"id": userData.ID}, 200 )
+		"id": userData.ID}, 201 )
 }
 
 func (user *userUsecase) UpdateUserData(userUpdate dto.User, id string) dto.Response {
@@ -107,3 +107,7 @@ func (user *userUsecase) DeleteUserById(id string) dto.Response {
 	}
 	return helpers.ResponseSuccess("ok", nil, nil, 200)
 }
+
+// func (user *userUsecase) userLogin(userLogin dto.UserLogin) dto.Response {
+// 	user.userRepo.
+// }

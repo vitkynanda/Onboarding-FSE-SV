@@ -57,7 +57,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8001/products/c3d90bd0-a868-48f9-bba1-0f3a2491ff60",
+					"raw": "http://localhost:8001/products/c3d90bd0-a868-48f9-bba1-0f3a2491ff60/checked",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -65,7 +65,8 @@
 					"port": "8001",
 					"path": [
 						"products",
-						"c3d90bd0-a868-48f9-bba1-0f3a2491ff60"
+						"c3d90bd0-a868-48f9-bba1-0f3a2491ff60",
+						"checked"
 					]
 				}
 			},

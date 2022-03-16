@@ -79,7 +79,7 @@ func (product *productUsecase) CreateNewProduct(newProduct dto.Product) dto.Resp
 	}
 
 	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{
-		"id": userData.ID}, 200 )
+		"id": userData.ID}, 201 )
 }
 
 func (product *productUsecase) UpdateProductData(productUpdate dto.Product, id string, actionType string) dto.Response {
