@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "82ed0378-39f3-4c82-88ee-10375a9d352b",
+		"_postman_id": "ecf5be8a-6ac9-4556-912b-f594d4c10b1a",
 		"name": "Product",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -9,7 +9,19 @@
 			"name": "Get Product By Id",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8001/products/093cf9e0-833d-4ace-8643-6c03323f6e81",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"products",
+						"093cf9e0-833d-4ace-8643-6c03323f6e81"
+					]
+				}
 			},
 			"response": []
 		},
@@ -28,7 +40,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8001/products/c3d90bd0-a868-48f9-bba1-0f3a2491ff60",
+					"raw": "http://localhost:8001/products/c3d90bd0-a868-48f9-bba1-0f3a2491ff60/published",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -36,7 +48,8 @@
 					"port": "8001",
 					"path": [
 						"products",
-						"c3d90bd0-a868-48f9-bba1-0f3a2491ff60"
+						"c3d90bd0-a868-48f9-bba1-0f3a2491ff60",
+						"published"
 					]
 				}
 			},
