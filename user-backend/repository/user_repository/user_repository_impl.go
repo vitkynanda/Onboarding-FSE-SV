@@ -9,15 +9,16 @@ import (
 	"gorm.io/gorm"
 )
 
-// func (repo *userRepository) GetUserByPN(pn string) (*entity.User, error) {
-// 	user := entity.User{}
-// 	err := repo.mysqlConnection.Where("personal_number = ?", pn).Find(&user).Error
-// 	if err != nil {
-// 		return nil, err
-// 	}
+func (repo *userRepository) GetUserByPN(pn string) (*entity.User, error) {
+	user := entity.User{}
+	result := repo.mysqlConnection.Where("personal_number = ?", pn).Find(&user)
+	if (result.RowsAffected == 0) {
+		return nil, gorm.ErrRecordNotFound
+	}
 
-// 	return user, nil
-// }
+	return &user, nil
+}
+
 func (repo *userRepository) GetAllUsers() ([]entity.UserList, error) {
 	users := []entity.UserList{}
 	err := repo.mysqlConnection.Model(&entity.User{}).Select("users.name, users.active, users.id, roles.title, users.role_id").Joins("left join roles on roles.id = users.role_id").Scan(&users).Error

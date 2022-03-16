@@ -16,8 +16,14 @@ type CustomClaim struct {
 }
 
 func (jwtAuth *jwtUsecase) GenerateToken(userId string) (string, error) {
+	data, err := jwtAuth.userRepo.GetUserById(userId)
+	if err != nil {
+		return "user not found", err
+	}
+
 	claim := CustomClaim{
 		UserID: userId,
+		RoleID: data.RoleID,
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  time.Now().Unix(),
 			ExpiresAt: time.Now().Add(time.Minute * 60).Unix(),
@@ -26,7 +32,7 @@ func (jwtAuth *jwtUsecase) GenerateToken(userId string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &claim)
-	return token.SignedString([]byte(os.Getenv("SECRET_KEY")))
+	return token.SignedString([]byte("TEST"))
 }
 
 func (jwtAuth *jwtUsecase) ValidateToken(token string) (*jwt.Token, error) {
@@ -35,7 +41,7 @@ func (jwtAuth *jwtUsecase) ValidateToken(token string) (*jwt.Token, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method %v", t.Header["alg"])
 		}
-		return []byte(os.Getenv("SECRET_KEY")), nil
+		return []byte("TEST"), nil
 	})
 }
 

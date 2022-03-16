@@ -33,6 +33,7 @@ func HandlerRequest() {
 	router.PUT("/products/:id/:type/", productDelivery.UpdateProductData )
 	router.DELETE("/products/:id", productDelivery.DeleteProductById )
 
+	router.POST("/login", userDelivery.UserLogin )	
 	router.GET("/users", userDelivery.GetAllUsers )	
 	router.GET("/users/:id", userDelivery.GetUserById )	
 	router.POST("/users", userDelivery.CreateNewUser )	

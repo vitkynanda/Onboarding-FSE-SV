@@ -6,7 +6,7 @@ import (
 )
 
 type UserUsecase interface {
-	// UserLogin(dto.UserLogin) (string, error)
+	UserLogin(dto.UserLogin) (dto.Response)
 	GetAllUsers() (dto.Response)
 	GetUserById(string) (dto.Response)
 	CreateNewUser(dto.User) (dto.Response)

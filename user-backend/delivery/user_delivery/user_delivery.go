@@ -7,6 +7,7 @@ import (
 )
 
 type UserDelivery interface {
+	UserLogin(*gin.Context) 
 	GetAllUsers(*gin.Context)
 	GetUserById(*gin.Context)
 	CreateNewUser(*gin.Context)

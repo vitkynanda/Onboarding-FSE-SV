@@ -8,6 +8,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+
+
+func (res *userDelivery) UserLogin(c *gin.Context) {
+	request := dto.UserLogin{}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		errorRes := helpers.ResponseError("Bad Request", err, 400)
+		c.JSON(errorRes.StatusCode, errorRes)
+		return
+	}
+	response := res.usecase.UserLogin(request)
+	
+	if (response.Status != "ok") {
+		c.JSON(response.StatusCode, response)
+		return
+	}
+	c.JSON(response.StatusCode, response)
+}
+
 func (res *userDelivery) GetAllUsers(c *gin.Context) {
 	response := res.usecase.GetAllUsers()
 	// fmt.Printf("%+v", response)

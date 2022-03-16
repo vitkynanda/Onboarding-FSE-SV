@@ -5,6 +5,7 @@ import (
 	"go-api/helpers"
 	"go-api/models/dto"
 	"go-api/models/entity"
+	"go-api/usecase/jwt_usecase"
 
 	"gorm.io/gorm"
 )
@@ -108,6 +109,22 @@ func (user *userUsecase) DeleteUserById(id string) dto.Response {
 	return helpers.ResponseSuccess("ok", nil, nil, 200)
 }
 
-// func (user *userUsecase) userLogin(userLogin dto.UserLogin) dto.Response {
-// 	user.userRepo.
-// }
+func (user *userUsecase) UserLogin(userLogin dto.UserLogin) dto.Response {
+	userData, err := user.userRepo.GetUserByPN(userLogin.PersonalNumber)
+
+	if err != nil  {
+		return helpers.ResponseError("User not found", map[string]interface{}{"message":"Personal Number not found"}, 404)
+	}
+
+	errPwd := helpers.CheckPasswordHash(userLogin.Password, userData.Password)
+
+	if errPwd != nil  {
+		return helpers.ResponseError("User not found", map[string]interface{}{"message":"Wrong Password"}, 404)
+	}
+	
+	jwt := jwt_usecase.GetJwtUsecase(user.userRepo)
+
+	response, _ := jwt.GenerateToken(userData.ID)
+
+	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{"token": response}, 200)
+}

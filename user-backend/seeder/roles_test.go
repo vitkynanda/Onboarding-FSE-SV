@@ -21,7 +21,7 @@ func TestSeedRoles(t *testing.T) {
 	DB, errDB = gorm.Open(mysql.Open(dsn))
 
 	if errDB != nil {
-		t.Fatal("failed to connect database")
+		t.Fatal  ("failed to connect database")
 	}
 
 	roles := []entity.Role{
