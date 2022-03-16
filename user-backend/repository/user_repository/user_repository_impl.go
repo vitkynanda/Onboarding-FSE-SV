@@ -10,7 +10,6 @@ import (
 )
 
 func (repo *userRepository) GetAllUsers() ([]entity.UserList, error) {
-	
 	users := []entity.UserList{}
 	err := repo.mysqlConnection.Model(&entity.User{}).Select("users.name, users.active, users.id, roles.title, users.role_id").Joins("left join roles on roles.id = users.role_id").Scan(&users).Error
 	if err != nil {
@@ -26,7 +25,6 @@ func (repo *userRepository) GetAllUsers() ([]entity.UserList, error) {
 
 func (repo *userRepository) GetUserById(id string) (*entity.UserDetail, error) {
 	user := entity.UserDetail{}
-	
 	err := repo.mysqlConnection.Model(&entity.User{}).Where("users.id = ?", id).Select("users.name, users.active, users.email, users.personal_number, users.id, roles.title, users.role_id").Joins("left join roles on roles.id = users.role_id").Scan(&user).Error
 	if err != nil {
 		return nil, err

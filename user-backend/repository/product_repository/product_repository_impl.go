@@ -31,26 +31,31 @@ func (repo *productRepository) GetProductById(id string) (*entity.ProductDetail,
 		return nil, err
 	}
 
+	if (entity.Product{}) == product {
+		return nil, gorm.ErrRecordNotFound
+	}
+
 	productDetail.ID = product.ID
 	productDetail.Name = product.Name
 	productDetail.Description = product.Description
 	productDetail.Status = product.Status 
 
-	sql := "SELECT * FROM users WHERE id IN"
-	sql = fmt.Sprintf("%s ('%s' ,'%s' ,'%s')", sql, product.MakerID, product.CheckerID, product.MakerID)
-
-	err :=  repo.mysqlConnection.Raw(sql).Scan(&users).Error;
+	err := repo.mysqlConnection.Where("name IN ?", []string{product.MakerID, product.CheckerID, product.MakerID}).Find(&users).Error;
 	if err != nil {
 		return nil, err
 	}
 
-	if (len(users)>0){
-		productDetail.MakerID = users[0].ID
-		productDetail.MakerName = users[0].Name
-		productDetail.CheckerID = users[1].ID
-		productDetail.CheckerName = users[1].Name
-		productDetail.SignerID = users[2].ID
-		productDetail.SignerName = users[2].Name
+	for i, user := range users {
+		if (i == 0) {
+			productDetail.MakerID = user.ID
+			productDetail.MakerName = user.Name
+		} else if (i == 1){
+			productDetail.CheckerID = user.ID
+			productDetail.CheckerName = user.Name
+		} else {
+			productDetail.SignerID = user.ID
+			productDetail.SignerName = user.Name
+		}
 	}
 	
 	return &productDetail, nil

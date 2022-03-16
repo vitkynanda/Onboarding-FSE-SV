@@ -42,7 +42,7 @@ func (res *userDelivery) CreateNewUser(c *gin.Context) {
 		// 	c.JSON(http.StatusBadRequest, errorRes)
 		// 	return
 		// }
-		errorRes := helpers.ResponseError("Bad Request", err)
+		errorRes := helpers.ResponseError("Bad Request", err, 400)
 			c.JSON(http.StatusBadRequest, errorRes)
 			return
 	}
@@ -69,7 +69,7 @@ func (res *userDelivery) UpdateUserData(c *gin.Context) {
 		// 	c.JSON(http.StatusBadRequest, errorRes)
 		// 	return
 		// }
-		errorRes := helpers.ResponseError("Bad Request", err)
+		errorRes := helpers.ResponseError("Bad Request", err, 400)
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}

@@ -1,13 +1,11 @@
 package product_delivery
 
 import (
-	"fmt"
 	"go-api/helpers"
 	"go-api/models/dto"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 func (product *productDelivery) GetAllProducts(c *gin.Context) {
@@ -33,17 +31,18 @@ func (product *productDelivery) GetProductById(c *gin.Context)    {
 func (product *productDelivery) CreateNewProduct(c *gin.Context)  {
 	request := dto.Product{}
 	if err := c.ShouldBindJSON(&request); err != nil {
-		errorMessages :=  []string{}
-		for _, e :=  range err.(validator.ValidationErrors) {
-			errorMessage := fmt.Sprintf("Error on Field %s, condition: %s", e.Field(), e.ActualTag())
-			errorMessages = append(errorMessages,  errorMessage)
-		} 
+		// errorMessages :=  []string{}
+		// for _, e :=  range err.(validator.ValidationErrors) {
+		// 	errorMessage := fmt.Sprintf("Error on Field %s, condition: %s", e.Field(), e.ActualTag())
+		// 	errorMessages = append(errorMessages,  errorMessage)
+		// } 
+		
+		// if len(errorMessages) > 0 {
+		// }
+		errorRes := helpers.ResponseError("Invalid Input", err, 400  )
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
 
-		if len(errorMessages) > 0 {
-			errorRes := helpers.ResponseError("Invalid Input", 400)
-			c.JSON(http.StatusBadRequest, errorRes)
-			return
-		}
 	}
 	response := product.productUsecase.CreateNewProduct(request)
 	if (response.Status != "ok") {
@@ -60,7 +59,7 @@ func (product *productDelivery) UpdateProductData(c *gin.Context) {
 	request := dto.Product{}
 
 	if err := c.ShouldBindJSON(&request); err != nil {
-		errorRes := helpers.ResponseError("Invalid Input", err)
+		errorRes := helpers.ResponseError("Invalid Input", err, 400)
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}

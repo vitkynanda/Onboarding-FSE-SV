@@ -24,20 +24,20 @@ func (user *userUsecase) GetAllUsers() dto.Response {
 	}
 
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return helpers.ResponseError("Data not found", err)
+		return helpers.ResponseError("Data not found", err, 404)
 	} else if err != nil {
-		return helpers.ResponseError("Internal server error", err)
+		return helpers.ResponseError("Internal server error", err, 500)
 	}
-	return helpers.ResponseSuccess("ok", nil, response)
+	return helpers.ResponseSuccess("ok", nil, response, 200)
 }
 
 func (user *userUsecase) GetUserById(id string) dto.Response {
 	userData, err := user.userRepo.GetUserById(id)
 	
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return helpers.ResponseError("Data not found", err)
+		return helpers.ResponseError("Data not found", err, 404)
 	} else if err != nil {
-		return helpers.ResponseError("Internal server error", err)
+		return helpers.ResponseError("Internal server error", err, 500)
 	}
 
 	role := dto.Role{
@@ -53,7 +53,7 @@ func (user *userUsecase) GetUserById(id string) dto.Response {
 		"personalNumber": userData.Personal_number,
 		"active": userData.Active,
 	}
-	return helpers.ResponseSuccess("ok", nil, userResponse)
+	return helpers.ResponseSuccess("ok", nil, userResponse, 200)
 }
 
 func (user *userUsecase) CreateNewUser(newUser dto.User) dto.Response {
@@ -68,11 +68,11 @@ func (user *userUsecase) CreateNewUser(newUser dto.User) dto.Response {
 	userData, _, err := user.userRepo.CreateNewUser(userInsert)
 	
 	 if err != nil {
-		return helpers.ResponseError("Internal server error", err)
+		return helpers.ResponseError("Internal server error", err, 500)
 	}
 
 	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{
-		"id": userData.ID} )
+		"id": userData.ID}, 200 )
 }
 
 func (user *userUsecase) UpdateUserData(userUpdate dto.User, id string) dto.Response {
@@ -87,13 +87,13 @@ func (user *userUsecase) UpdateUserData(userUpdate dto.User, id string) dto.Resp
 	_, err := user.userRepo.UpdateUserData(userInsert, id)
 	 
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return helpers.ResponseError("Data not found", err)
+		return helpers.ResponseError("Data not found", err, 404)
 	} else if err != nil {
-		return helpers.ResponseError("Internal server error", err)
+		return helpers.ResponseError("Internal server error", err, 500)
 	}
 
 	userUpdate.Id = id
-	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{"id": id})
+	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{"id": id}, 200)
 }
 
 func (user *userUsecase) DeleteUserById(id string) dto.Response {
@@ -101,9 +101,9 @@ func (user *userUsecase) DeleteUserById(id string) dto.Response {
  err := user.userRepo.DeleteUserById(id)
  
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return helpers.ResponseError("Data not found", err)
+		return helpers.ResponseError("Data not found", err, 404)
 	} else if err != nil {
-		return helpers.ResponseError("Internal server error", err)
+		return helpers.ResponseError("Internal server error", err, 500)
 	}
-	return helpers.ResponseSuccess("ok", nil, nil)
+	return helpers.ResponseSuccess("ok", nil, nil, 200)
 }
