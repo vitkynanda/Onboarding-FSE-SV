@@ -124,7 +124,7 @@ func (user *userUsecase) UserLogin(userLogin dto.UserLogin) dto.Response {
 	
 	jwt := jwt_usecase.GetJwtUsecase(user.userRepo)
 
-	response, _ := jwt.GenerateToken(userData.ID)
+	response, _ := jwt.GenerateToken(userData.ID, userData.RoleID)
 
 	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{"token": response}, 200)
 }

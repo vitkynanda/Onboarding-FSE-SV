@@ -7,7 +7,7 @@ import (
 )
 
 type JwtUsecase interface {
-	GenerateToken(string) (string, error)
+	GenerateToken(string, string) (string, error)
 	ValidateToken(string) (*jwt.Token, error)
 	ValidateTokenAndGetUserId(string) (string, error)
 }

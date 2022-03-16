@@ -11,19 +11,19 @@ import (
 
 type CustomClaim struct {
 	jwt.StandardClaims
-	RoleID string `json:"role_id"`
+	Role string `json:"role"`
 	UserID string `json:"user_id"`
 }
 
-func (jwtAuth *jwtUsecase) GenerateToken(userId string) (string, error) {
-	data, err := jwtAuth.userRepo.GetUserById(userId)
+func (jwtAuth *jwtUsecase) GenerateToken(userId string, roleId string) (string, error) {
+	data, err := jwtAuth.userRepo.GetRoleByRoleId(roleId)
 	if err != nil {
 		return "user not found", err
 	}
 
 	claim := CustomClaim{
 		UserID: userId,
-		RoleID: data.RoleID,
+		Role: data.Title,
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  time.Now().Unix(),
 			ExpiresAt: time.Now().Add(time.Minute * 60).Unix(),

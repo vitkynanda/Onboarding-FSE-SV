@@ -8,6 +8,7 @@ import (
 
 type UserRepository interface {
 	GetUserByPN(string)(*entity.User, error)
+	GetRoleByRoleId(string)(*entity.Role, error)
 	GetAllUsers() ([]entity.UserList, error)
 	GetUserById(string) (*entity.UserDetail, error) 
 	CreateNewUser(entity.User) (*entity.User, *entity.Role, error)

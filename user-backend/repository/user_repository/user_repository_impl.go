@@ -9,6 +9,16 @@ import (
 	"gorm.io/gorm"
 )
 
+func (repo *userRepository) GetRoleByRoleId(id string) (*entity.Role, error) {
+	role := entity.Role{}
+	result := repo.mysqlConnection.Where("id = ?", id).Find(&role)
+	if (result.RowsAffected == 0) {
+		return nil, gorm.ErrRecordNotFound
+	}
+
+	return &role, nil
+}
+
 func (repo *userRepository) GetUserByPN(pn string) (*entity.User, error) {
 	user := entity.User{}
 	result := repo.mysqlConnection.Where("personal_number = ?", pn).Find(&user)
@@ -49,6 +59,13 @@ func (repo *userRepository) GetUserById(id string) (*entity.UserDetail, error) {
 
 func (repo *userRepository) CreateNewUser(user entity.User) (*entity.User, *entity.Role, error){
 	role := entity.Role{}
+	
+	
+	result := repo.mysqlConnection.Where("personal_number = ?", user.Personal_number).Find(&user)
+	if (result.RowsAffected > 0)  {
+		return nil, nil, gorm.ErrRegistered
+	}
+
 	user.ID = uuid.New().String()
 	hash,_ := helpers.HashPassword(user.Password)
 	user.Password = hash
