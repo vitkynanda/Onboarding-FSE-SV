@@ -54,6 +54,7 @@ const Login = () => {
         history.push('/');
 
         localStorage.setItem('token', msg.data.token);
+        localStorage.setItem('username', msg.data.name);
         return;
       }
 

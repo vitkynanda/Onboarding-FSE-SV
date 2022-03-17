@@ -84,10 +84,11 @@ func (repo *userRepository) CreateNewUser(user entity.User) (*entity.User, *enti
 }
 
 func (repo *userRepository) UpdateUserData(user entity.User, id string) (*entity.User, error){
-	
+	hash,_ := helpers.HashPassword(user.Password)
+
 	result:= repo.mysqlConnection.Model(&user).Where("id = ?", id).Updates(map[string]interface{}{
 		"name": user.Name,
-		"password": user.Password,
+		"password": hash,
 		"role_id": user.RoleID,
 		"active": user.Active,
 		"email": user.Email,

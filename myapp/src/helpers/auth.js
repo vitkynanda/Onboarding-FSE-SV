@@ -1,13 +1,17 @@
 import jwt_decode from 'jwt-decode';
 const users = () => {
   const token = localStorage.getItem('token');
+  const name = localStorage.getItem('username');
+
   try {
     if (token !== '') {
-      const decode = jwt_decode(token);
+      const decode = jwt_decode(`${token}`);
+      console.log(decode);
       return {
         isLogin: true,
-        userId: decode?.data?.user_id,
-        role: decode?.data?.role,
+        userId: decode?.user_id,
+        role: decode?.role,
+        name,
       };
     } else {
       throw 'not login';

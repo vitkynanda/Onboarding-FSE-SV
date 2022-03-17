@@ -5,7 +5,8 @@ import { history, useModel } from 'umi';
 import { stringify } from 'querystring';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
-import { outLogin } from '@/services/ant-design-pro/api';
+import users from '@/helpers/auth';
+// import { outLogin } from '@/services/ant-design-pro/api';
 
 /**
  * 退出登录，并且将当前的 url 保存
@@ -29,6 +30,8 @@ const loginOut = async () => {
 
 const AvatarDropdown = ({ menu }) => {
   const { initialState, setInitialState } = useModel('@@initialState');
+  console.log(initialState);
+
   const onMenuClick = useCallback((event) => {
     const { key } = event;
 
@@ -88,7 +91,7 @@ const AvatarDropdown = ({ menu }) => {
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
         {/* <Avatar size="small" className={styles.avatar} src={currentUser?.avatar} alt="avatar" /> */}
-        <span className={`${styles.name} anticon`}>test</span>
+        <span className={`${styles.name} anticon`}>{initialState.state.username}</span>
       </span>
     </HeaderDropdown>
   );
