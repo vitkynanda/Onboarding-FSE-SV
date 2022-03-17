@@ -17,7 +17,6 @@ var env = map[string]map[string]string{
 	"local": {
 		"APP_NAME" : "fse",
 		"SECRET_KEY" : "secret",
-
 	},
 }
 

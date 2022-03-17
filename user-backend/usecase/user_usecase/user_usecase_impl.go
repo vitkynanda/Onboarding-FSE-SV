@@ -5,7 +5,6 @@ import (
 	"go-api/helpers"
 	"go-api/models/dto"
 	"go-api/models/entity"
-	"go-api/usecase/jwt_usecase"
 
 	"gorm.io/gorm"
 )
@@ -85,6 +84,7 @@ func (user *userUsecase) UpdateUserData(userUpdate dto.User, id string) dto.Resp
 		Password: userUpdate.Password,
 		RoleID: userUpdate.Role.Id,
 	}
+	
 	_, err := user.userRepo.UpdateUserData(userInsert, id)
 	 
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
@@ -121,10 +121,7 @@ func (user *userUsecase) UserLogin(userLogin dto.UserLogin) dto.Response {
 	if errPwd != nil  {
 		return helpers.ResponseError("User not found", map[string]interface{}{"message":"Wrong Password"}, 404)
 	}
-	
-	jwt := jwt_usecase.GetJwtUsecase(user.userRepo)
+	jwt, _ := user.jwtAuth.GenerateToken(userData.ID, userData.RoleID)
 
-	response, _ := jwt.GenerateToken(userData.ID, userData.RoleID)
-
-	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{"token": response}, 200)
+	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{"token": jwt, "name": userData.Name}, 200)
 }

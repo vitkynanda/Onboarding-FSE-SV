@@ -58,3 +58,16 @@ func (jwtAuth *jwtUsecase) ValidateTokenAndGetUserId(token string) (string, erro
 
 	return claims["user_id"].(string), nil
 }
+func (jwtAuth *jwtUsecase) ValidateTokenAndGetRole(token string) (string, error) {
+	validatedToken, err := jwtAuth.ValidateToken(token)
+	if err != nil {
+		return "", err
+	}
+
+	claims, ok := validatedToken.Claims.(jwt.MapClaims)
+	if !ok {
+		return "", errors.New("failed to claim token")
+	}
+
+	return claims["user_id"].(string), nil
+}

@@ -3,6 +3,7 @@ package user_usecase
 import (
 	"go-api/models/dto"
 	"go-api/repository/user_repository"
+	"go-api/usecase/jwt_usecase"
 )
 
 type UserUsecase interface {
@@ -16,10 +17,12 @@ type UserUsecase interface {
 
 type userUsecase struct {
 	userRepo user_repository.UserRepository
+	jwtAuth jwt_usecase.JwtUsecase
 }
 
-func GetUserUsecase(userRepository user_repository.UserRepository) UserUsecase {
+func GetUserUsecase(userRepository user_repository.UserRepository, jwtAuthentication jwt_usecase.JwtUsecase)  UserUsecase {
 	return &userUsecase{
 		userRepo: userRepository,
+		jwtAuth: jwtAuthentication,
 	}
 }
