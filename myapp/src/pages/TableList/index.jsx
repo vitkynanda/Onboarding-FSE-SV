@@ -286,7 +286,7 @@ const TableList = () => {
       )}
       <ModalForm
         title={intl.formatMessage({
-          id: 'pages.searchTable.createForm.newRule',
+          id: 'pages.searchTable.createForm.newRul',
           defaultMessage: 'Edit User',
         })}
         initialValues={{
@@ -312,6 +312,7 @@ const TableList = () => {
               ),
             },
           ]}
+          value={userData?.name}
           width="md"
           name="name"
           label="Name"
@@ -325,6 +326,7 @@ const TableList = () => {
               ),
             },
           ]}
+          value={userData?.email}
           width="md"
           name="mail"
           label="Email"
@@ -341,6 +343,7 @@ const TableList = () => {
               ),
             },
           ]}
+          value={userData?.personalNumber}
           width="md"
           name="personalNumber"
           label="Personal Number"
@@ -357,6 +360,7 @@ const TableList = () => {
               ),
             },
           ]}
+          value={userData?.password}
           width="md"
           name="pwd"
           label="Password"
@@ -373,6 +377,7 @@ const TableList = () => {
               label: 'Inactive',
             },
           ]}
+          value={userData?.active}
           width="xs"
           name="active"
           label="Active Status"

@@ -59,7 +59,7 @@ export default {
   'pages.searchTable.titleOption': 'Option',
   'pages.searchTable.config': 'Configuration',
   'pages.searchTable.subscribeAlert': 'Subscribe to alerts',
-  'pages.searchTable.title': 'Enquiry Form',
+  'pages.searchTable.title': 'Table',
   'pages.searchTable.new': 'New',
   'pages.searchTable.chosen': 'chosen',
   'pages.searchTable.item': 'item',

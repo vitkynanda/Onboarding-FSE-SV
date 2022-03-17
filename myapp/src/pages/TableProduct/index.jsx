@@ -79,7 +79,7 @@ import request from 'umi-request';
 //   }
 // };
 
-const TableList = () => {
+const TableProduct = () => {
   /**
    * @en-US Pop-up window of new window
    * @zh-CN 新建窗口的弹窗
@@ -108,7 +108,7 @@ const TableList = () => {
       dataIndex: 'id',
       sorter: true,
       copyable: true,
-      tip: 'The rule id is the unique key',
+      tip: 'The  id is the unique key',
       render: (_, row) => {
         return <p title={row.id}>{row.id.slice(0, 8)}...</p>;
       },
@@ -117,18 +117,27 @@ const TableList = () => {
       title: 'Name',
       dataIndex: 'name',
       sorter: true,
-      tip: 'User Name',
+      tip: 'Product Name',
       render: (_, row) => {
         return <p>{row.name}</p>;
       },
     },
     {
-      title: 'Role',
-      dataIndex: 'role',
+      title: 'Description',
+      dataIndex: 'description',
       sorter: true,
-      tip: 'User Role',
+      tip: 'Product Description',
       render: (_, row) => {
-        return <p>{row.role.title}</p>;
+        return <p>{row.description}</p>;
+      },
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      sorter: true,
+      tip: 'Product Status',
+      render: (_, row) => {
+        return <p>{row.status}</p>;
       },
     },
     {
@@ -139,9 +148,11 @@ const TableList = () => {
       render: (_, row) => {
         return (
           <div style={{ display: 'flex' }}>
-            <Button onClick={() => removeUser(row.id, actionRef)}>
-              <DeleteOutlined />
-            </Button>
+            <div style={{ marginRight: 5 }}>
+              <Button onClick={() => removeProduct(row.id, actionRef)}>
+                <DeleteOutlined />
+              </Button>
+            </div>
             <Button
               onClick={() => {
                 setUserData(row);
@@ -156,22 +167,15 @@ const TableList = () => {
     },
   ];
 
-  const handleEditUser = async (value) => {
+  const handleEditProduct = async (value) => {
+    const { name, description } = value;
+    console.log(value);
     const options = {
       method: 'PUT',
-      body: JSON.stringify({
-        personalNumber: value.personalNumber ?? '',
-        password: value.pwd ?? '',
-        email: value.mail ?? '',
-        name: value.name,
-        active: value.active,
-        role: {
-          id: value.role_id,
-        },
-      }),
+      body: JSON.stringify({ name, description }),
     };
 
-    const response = await fetch(`http://localhost:8001/users/${value.id}`, options);
+    const response = await fetch(`http://localhost:8001/products/${value.id}`, options);
     const result = await response.json();
     if (result.status == 'ok') {
       handleModalVisible(false);
@@ -182,10 +186,10 @@ const TableList = () => {
     }
   };
 
-  const removeUser = async (id, actionRef) => {
+  const removeProduct = async (id, actionRef) => {
     const hide = message.loading('Updating data');
     const options = { method: 'DELETE' };
-    const response = await fetch(`http://localhost:8001/users/${id}`, options);
+    const response = await fetch(`http://localhost:8001/products/${id}`, options);
     const result = await response.json();
     console.log(result);
 
@@ -225,7 +229,7 @@ const TableList = () => {
         request={
           // rule
           async (params = {}) => {
-            const response = await request('http://localhost:8001/users', {
+            const response = await request('http://localhost:8001/products', {
               params,
             });
             console.log(response);
@@ -286,18 +290,18 @@ const TableList = () => {
       )}
       <ModalForm
         title={intl.formatMessage({
-          id: 'pages.searchTable.createForm.newRule',
+          id: 'pages.searchTable.createForm.newRul',
           defaultMessage: 'Edit User',
         })}
         initialValues={{
-          name: userData.name,
-          active: userData.active,
+          name: userData?.name,
+          description: userData?.description,
         }}
         width="400px"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
         onFinish={(value) => {
-          handleEditUser({ ...value, id: userData.id, role_id: userData.role.id });
+          handleEditProduct({ ...value, id: userData.id });
         }}
       >
         <ProFormText
@@ -305,77 +309,31 @@ const TableList = () => {
             {
               required: true,
               message: (
-                <FormattedMessage
-                  id="pages.searchTable.ruleName"
-                  defaultMessage="Name is required"
-                />
+                <FormattedMessage id="pages.searchTable.name" defaultMessage="Name is required" />
               ),
             },
           ]}
+          value={userData.name}
           width="md"
           name="name"
           label="Name"
         />
-        <ProFormText
-          rules={[
-            {
-              // required: true,
-              message: (
-                <FormattedMessage id="pages.searchTable.Email" defaultMessage="Email is required" />
-              ),
-            },
-          ]}
-          width="md"
-          name="mail"
-          label="Email"
-        />
-        <ProFormText
-          rules={[
-            {
-              // required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.personalNumber"
-                  defaultMessage="Email is required"
-                />
-              ),
-            },
-          ]}
-          width="md"
-          name="personalNumber"
-          label="Personal Number"
-        />
-        <ProFormText.Password
-          rules={[
-            {
-              // required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.password"
-                  defaultMessage="Rule name is required"
-                />
-              ),
-            },
-          ]}
-          width="md"
-          name="pwd"
-          label="Password"
-        />
 
-        <ProFormSelect
-          request={async () => [
-            {
-              value: true,
-              label: 'Active',
-            },
-            {
-              value: false,
-              label: 'Inactive',
-            },
-          ]}
-          width="xs"
-          name="active"
-          label="Active Status"
+        <ProFormText
+          // rules={[
+          //   {
+          //     message: (
+          //       <FormattedMessage
+          //         id="pages.searchTable.description"
+          //         defaultMessage="Email is required"
+          //       />
+          //     ),
+          //   },
+          // ]}
+          width="md"
+          value={userData.description}
+          name="description"
+          label="Description"
         />
       </ModalForm>
       {/* <UpdateForm
@@ -429,4 +387,4 @@ const TableList = () => {
   );
 };
 
-export default TableList;
+export default TableProduct;

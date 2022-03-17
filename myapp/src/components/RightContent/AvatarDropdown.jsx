@@ -11,36 +11,35 @@ import { outLogin } from '@/services/ant-design-pro/api';
  * 退出登录，并且将当前的 url 保存
  */
 const loginOut = async () => {
-  await outLogin();
-  const { query = {}, search, pathname } = history.location;
-  const { redirect } = query; // Note: There may be security issues, please note
+  localStorage.removeItem('token');
+  history.push('/user/login');
+  // await outLogin();
+  // const { query = {}, search, pathname } = history.location;
+  // const { redirect } = query; // Note: There may be security issues, please note
 
-  if (window.location.pathname !== '/user/login' && !redirect) {
-    history.replace({
-      pathname: '/user/login',
-      search: stringify({
-        redirect: pathname + search,
-      }),
-    });
-  }
+  // if (window.location.pathname !== '/user/login' && !redirect) {
+  //   history.replace({
+  //     pathname: '/user/login',
+  //     search: stringify({
+  //       redirect: pathname + search,
+  //     }),
+  //   });
+  // }
 };
 
 const AvatarDropdown = ({ menu }) => {
   const { initialState, setInitialState } = useModel('@@initialState');
-  const onMenuClick = useCallback(
-    (event) => {
-      const { key } = event;
+  const onMenuClick = useCallback((event) => {
+    const { key } = event;
 
-      if (key === 'logout') {
-        setInitialState((s) => ({ ...s, currentUser: undefined }));
-        loginOut();
-        return;
-      }
+    if (key === 'logout') {
+      localStorage.removeItem('token');
+      history.push('/user/login');
+      return;
+    }
 
-      history.push(`/account/${key}`);
-    },
-    [setInitialState],
-  );
+    history.push(`/account/${key}`);
+  }, []);
   const loading = (
     <span className={`${styles.action} ${styles.account}`}>
       <Spin
@@ -53,15 +52,15 @@ const AvatarDropdown = ({ menu }) => {
     </span>
   );
 
-  if (!initialState) {
-    return loading;
-  }
+  // if (!initialState) {
+  //   return loading;
+  // }
 
-  const { currentUser } = initialState;
+  // const { currentUser } = initialState;
 
-  if (!currentUser || !currentUser.name) {
-    return loading;
-  }
+  // if (!currentUser || !currentUser.name) {
+  //   return loading;
+  // }
 
   const menuHeaderDropdown = (
     <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
@@ -81,15 +80,15 @@ const AvatarDropdown = ({ menu }) => {
 
       <Menu.Item key="logout">
         <LogoutOutlined />
-        退出登录
+        Logout
       </Menu.Item>
     </Menu>
   );
   return (
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
-        <Avatar size="small" className={styles.avatar} src={currentUser.avatar} alt="avatar" />
-        <span className={`${styles.name} anticon`}>{currentUser.name}</span>
+        {/* <Avatar size="small" className={styles.avatar} src={currentUser?.avatar} alt="avatar" /> */}
+        <span className={`${styles.name} anticon`}>test</span>
       </span>
     </HeaderDropdown>
   );

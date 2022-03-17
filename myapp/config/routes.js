@@ -29,29 +29,35 @@ export default [
     icon: 'smile',
     component: './Welcome',
   },
-  {
-    path: '/admin',
-    name: 'admin',
-    icon: 'crown',
-    access: 'canAdmin',
-    component: './Admin',
-    routes: [
-      {
-        path: '/admin/sub-page',
-        name: 'sub-page',
-        icon: 'smile',
-        component: './Welcome',
-      },
-      {
-        component: './404',
-      },
-    ],
-  },
+  // {
+  //   path: '/admin',
+  //   name: 'admin',
+  //   icon: 'crown',
+  //   access: 'canAdmin',
+  //   component: './Admin',
+  //   routes: [
+  //     {
+  //       path: '/admin/sub-page',
+  //       name: 'sub-page',
+  //       icon: 'smile',
+  //       component: './Welcome',
+  //     },
+  //     {
+  //       component: './404',
+  //     },
+  //   ],
+  // },
   {
     name: 'list.table-list',
     icon: 'table',
     path: '/list',
     component: './TableList',
+  },
+  {
+    name: 'Table Product',
+    icon: 'table',
+    path: '/product',
+    component: './TableProduct',
   },
   {
     path: '/',
