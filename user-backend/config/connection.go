@@ -1,4 +1,4 @@
-package connection
+package config
 
 import (
 	"go-api/models/entity"

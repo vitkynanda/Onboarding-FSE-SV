@@ -19,35 +19,32 @@ export const initialStateConfig = {
  * */
 
 export async function getInitialState() {
-  const fetchUserInfo = async () => {
-    try {
-      const msg = await queryCurrentUser();
-      return msg.data;
-    } catch (error) {
-      console.log(location.pathname);
-      if (location.pathname == loginPath) {
-        history.push(loginPath);
-        return;
-      }
-      history.push(registerPath);
-    }
-
-    return undefined;
-  }; // 如果是登录页面，不执行
-
-  if (history.location.pathname !== loginPath || registerPath) {
-    const currentUser = await fetchUserInfo();
-    return {
-      fetchUserInfo,
-      currentUser,
-      settings: defaultSettings,
-    };
-  }
-
-  return {
-    fetchUserInfo,
-    settings: defaultSettings,
-  };
+  // const fetchUserInfo = async () => {
+  //   try {
+  //     const msg = await queryCurrentUser();
+  //     return msg.data;
+  //   } catch (error) {
+  //     console.log(location.pathname);
+  //     if (location.pathname == loginPath) {
+  //       history.push(loginPath);
+  //       return;
+  //     }
+  //     history.push(registerPath);
+  //   }
+  //   return undefined;
+  // }; // 如果是登录页面，不执行
+  // if (history.location.pathname !== loginPath || registerPath) {
+  //   const currentUser = await fetchUserInfo();
+  //   return {
+  //     fetchUserInfo,
+  //     currentUser,
+  //     settings: defaultSettings,
+  //   };
+  // }
+  // return {
+  //   fetchUserInfo,
+  //   settings: defaultSettings,
+  // };
 } // ProLayout 支持的api https://procomponents.ant.design/components/layout
 
 export const layout = ({ initialState, setInitialState }) => {
@@ -59,13 +56,12 @@ export const layout = ({ initialState, setInitialState }) => {
     // },
     footerRender: () => <Footer />,
     onPageChange: () => {
-      const { location } = history; // 如果没有登录，重定向到 login
-
-      if (!initialState?.currentUser && location.pathname == registerPath) {
-        history.push(registerPath);
-      } else if (!initialState?.currentUser && location.pathname !== loginPath) {
-        history.push(loginPath);
-      }
+      // const { location } = history; // 如果没有登录，重定向到 login
+      // if (!initialState?.currentUser && location.pathname == registerPath) {
+      //   history.push(registerPath);
+      // } else if (!initialState?.currentUser && location.pathname !== loginPath) {
+      //   history.push(loginPath);
+      // }
     },
     links: isDev
       ? [

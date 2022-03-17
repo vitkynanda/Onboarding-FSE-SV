@@ -32,7 +32,7 @@ func (jwtAuth *jwtUsecase) GenerateToken(userId string, roleId string) (string, 
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &claim)
-	return token.SignedString([]byte("TEST"))
+	return token.SignedString([]byte(os.Getenv("SECRET_KEY")))
 }
 
 func (jwtAuth *jwtUsecase) ValidateToken(token string) (*jwt.Token, error) {
@@ -41,7 +41,7 @@ func (jwtAuth *jwtUsecase) ValidateToken(token string) (*jwt.Token, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method %v", t.Header["alg"])
 		}
-		return []byte("TEST"), nil
+		return []byte(os.Getenv("SECRET_KEY")), nil
 	})
 }
 

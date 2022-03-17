@@ -11,7 +11,7 @@ import React, { useState } from 'react';
 import { ProFormCaptcha, ProFormCheckbox, ProFormText, LoginForm } from '@ant-design/pro-form';
 import { useIntl, history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
-import { login, loginSv } from '@/services/ant-design-pro/api';
+import { login } from '@/services/ant-design-pro/api';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 import styles from './index.less';
 
@@ -32,19 +32,18 @@ const Login = () => {
   const { initialState, setInitialState } = useModel('@@initialState');
   const intl = useIntl();
 
-  // const fetchUserInfo = async () => {
-  //   const userInfo = await initialState?.fetchUserInfo?.();
+  const fetchUserInfo = async () => {
+    const userInfo = await initialState?.fetchUserInfo?.();
 
-  //   if (userInfo) {
-  //     await setInitialState((s) => ({ ...s, currentUser: userInfo }));
-  //   }
-  // };
+    if (userInfo) {
+      await setInitialState((s) => ({ ...s, currentUser: userInfo }));
+    }
+  };
 
   const handleSubmit = async (values) => {
-    const { personalNumber, password } = values;
     try {
       // 登录
-      const msg = await loginSv({ personalNumber, password });
+      const msg = await login({ ...values, type });
 
       if (msg.status === 'ok') {
         const defaultLoginSuccessMessage = intl.formatMessage({
@@ -52,13 +51,13 @@ const Login = () => {
           defaultMessage: '登录成功！',
         });
         message.success(defaultLoginSuccessMessage);
-        // await fetchUserInfo();
+        await fetchUserInfo();
         /** 此方法会跳转到 redirect 参数所在的位置 */
 
-        // if (!history) return;
-        // const { query } = history.location;
-        // const { redirect } = query;
-        history.push('/');
+        if (!history) return;
+        const { query } = history.location;
+        const { redirect } = query;
+        history.push(redirect || '/');
         return;
       }
 
@@ -66,10 +65,10 @@ const Login = () => {
 
       setUserLoginState(msg);
     } catch (error) {
-      // const defaultLoginFailureMessage = intl.formatMessage({
-      //   id: 'pages.login.failure',
-      //   defaultMessage: '登录失败，请重试！',
-      // });
+      const defaultLoginFailureMessage = intl.formatMessage({
+        id: 'pages.login.failure',
+        defaultMessage: '登录失败，请重试！',
+      });
       message.error(defaultLoginFailureMessage);
     }
   };
@@ -112,13 +111,13 @@ const Login = () => {
                 defaultMessage: '账户密码登录',
               })}
             />
-            {/* <Tabs.TabPane
+            <Tabs.TabPane
               key="mobile"
               tab={intl.formatMessage({
                 id: 'pages.login.phoneLogin.tab',
                 defaultMessage: '手机号登录',
               })}
-            /> */}
+            />
           </Tabs>
 
           {status === 'error' && loginType === 'account' && (
@@ -132,7 +131,7 @@ const Login = () => {
           {type === 'account' && (
             <>
               <ProFormText
-                name="personalNumber"
+                name="username"
                 fieldProps={{
                   size: 'large',
                   prefix: <UserOutlined className={styles.prefixIcon} />,
@@ -178,7 +177,7 @@ const Login = () => {
             </>
           )}
 
-          {/* {status === 'error' && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
+          {status === 'error' && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
           {type === 'mobile' && (
             <>
               <ProFormText
@@ -262,7 +261,7 @@ const Login = () => {
                 }}
               />
             </>
-          )} */}
+          )}
           <div
             style={{
               marginBottom: 24,

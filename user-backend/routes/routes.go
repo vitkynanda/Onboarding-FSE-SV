@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"go-api/connection"
+	"go-api/config"
 	"go-api/repository/product_repository"
 	"go-api/repository/user_repository"
 	"go-api/usecase/product_usecase"
@@ -15,7 +15,8 @@ import (
 )	
 
 func HandlerRequest() {
-	connection := connection.Connect()
+	config.InitConfig()
+	connection := config.Connect()
 	productRepository := product_repository.GetProductRepository(connection)
 	productUsecase := product_usecase.GetProductUsecase(productRepository)
 	productDelivery := product_delivery.GetProductDelivery(productUsecase)
