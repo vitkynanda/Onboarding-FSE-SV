@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func JWTAuth(jwtUsecase jwt_usecase.JwtUsecase) gin.HandlerFunc {
+func AdminAuth(jwtUsecase jwt_usecase.JwtUsecase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		fmt.Println(authHeader)
@@ -22,7 +22,7 @@ func JWTAuth(jwtUsecase jwt_usecase.JwtUsecase) gin.HandlerFunc {
 		}
 		fmt.Println(role)
 
-		if role == "viewer" {
+		if role != "admin" {
 			resp := helpers.ResponseError("Forbidden Access", "You have no access to do this action", 403)
 			c.AbortWithStatusJSON(resp.StatusCode, resp)
 			return

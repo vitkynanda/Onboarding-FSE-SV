@@ -1,6 +1,7 @@
 package user_delivery
 
 import (
+	"fmt"
 	"go-api/helpers"
 	"go-api/models/dto"
 	"net/http"
@@ -13,10 +14,13 @@ import (
 func (res *userDelivery) UserLogin(c *gin.Context) {
 	request := dto.UserLogin{}
 	if err := c.ShouldBindJSON(&request); err != nil {
-		errorRes := helpers.ResponseError("Bad Request", err, 400)
+		
+		errorRes := helpers.ResponseError("Bad Request", err.Error(), 400)
+		fmt.Printf("%+v", errorRes)
 		c.JSON(errorRes.StatusCode, errorRes)
 		return
 	}
+
 	response := res.usecase.UserLogin(request)
 	
 	if (response.Status != "ok") {
@@ -54,7 +58,7 @@ func (res *userDelivery) GetUserById(c *gin.Context) {
 func (res *userDelivery) CreateNewUser(c *gin.Context) {
 	request := dto.User{}
 	if err := c.ShouldBindJSON(&request); err != nil {
-		errorRes := helpers.ResponseError("Bad Request", err, 400)
+		errorRes := helpers.ResponseError("Bad Request", err.Error(), 400)
 		c.JSON(errorRes.StatusCode, errorRes)
 		return
 	}
@@ -71,7 +75,7 @@ func (res *userDelivery) UpdateUserData(c *gin.Context) {
   	id := c.Param("id")
 	request := dto.User{}
 	if err := c.ShouldBindJSON(&request); err != nil {
-		errorRes := helpers.ResponseError("Bad Request", err, 400)
+		errorRes := helpers.ResponseError("Bad Request", err.Error(), 400)
 		c.JSON(errorRes.StatusCode, errorRes)
 		return
 	}

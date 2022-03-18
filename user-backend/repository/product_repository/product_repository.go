@@ -8,9 +8,11 @@ import (
 
 type ProductRepository interface {
 	GetAllProducts() ([]entity.Product, error)
-	GetProductById(string) (*entity.ProductDetail, error)
+	GetProductById(string) (*entity.Product, []entity.User, error)
 	CreateNewProduct(entity.Product)(*entity.Product, error)
-	UpdateProductData(entity.Product, string, string) (*entity.Product, error) 
+	UpdateProductData(entity.Product, string) (*entity.Product, error) 
+	PublishedProduct(entity.Product, string) (*entity.Product, error) 
+	CheckedProduct(entity.Product, string) (*entity.Product, error) 
 	DeleteProductById(string) error
 }
 

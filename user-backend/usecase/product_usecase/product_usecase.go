@@ -9,7 +9,9 @@ type ProductUsecase interface {
 	GetAllProducts() dto.Response
 	GetProductById(string) dto.Response
 	CreateNewProduct(dto.Product) dto.Response
-	UpdateProductData(dto.Product, string, string) dto.Response
+	UpdateProductData(dto.Product, string) dto.Response
+	PublishedProduct(dto.Product, string) dto.Response
+	CheckedProduct(dto.Product, string) dto.Response
 	DeleteProductById(string) dto.Response
 }
 

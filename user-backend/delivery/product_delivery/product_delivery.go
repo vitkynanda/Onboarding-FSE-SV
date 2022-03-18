@@ -11,6 +11,8 @@ type ProductDelivery interface {
 	GetProductById(*gin.Context)
 	CreateNewProduct(*gin.Context)
 	UpdateProductData(*gin.Context)
+	PublishedProduct(*gin.Context)
+	CheckedProduct(*gin.Context)
 	DeleteProductById(*gin.Context)
 }
 

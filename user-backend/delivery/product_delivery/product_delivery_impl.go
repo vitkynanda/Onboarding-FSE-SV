@@ -36,8 +36,7 @@ func (product *productDelivery) GetProductById(c *gin.Context)    {
 func (product *productDelivery) CreateNewProduct(c *gin.Context)  {
 	request := dto.Product{}
 	if err := c.ShouldBindJSON(&request); err != nil {
-		
-		errorRes := helpers.ResponseError("Invalid Input", err, 400  )
+		errorRes := helpers.ResponseError("Bad Request", err.Error(), 400  )
 		c.JSON(errorRes.StatusCode, errorRes)
 		return
 
@@ -54,17 +53,76 @@ func (product *productDelivery) CreateNewProduct(c *gin.Context)  {
 
 func (product *productDelivery) UpdateProductData(c *gin.Context) {
 	id := c.Param("id")
-	actionType := c.Param("type")
-	
 	request := dto.Product{}
 
 	if err := c.ShouldBindJSON(&request); err != nil {
-		errorRes := helpers.ResponseError("Invalid Input", err, 400)
+		errorRes := helpers.ResponseError("Bad Request", err.Error(), 400)
 		c.JSON(errorRes.StatusCode, errorRes)
 		return
 	}
 
-	response := product.productUsecase.UpdateProductData(request, id, actionType)
+	response := product.productUsecase.UpdateProductData(request, id)
+	if (response.Status != "ok") {
+		c.JSON(response.StatusCode, response)
+		return
+	}
+	
+	c.JSON(response.StatusCode, response)
+}
+
+func (product *productDelivery) PublishedProduct(c *gin.Context) {
+	id := c.Param("id")
+	userId, _ := c.Get("user_id")
+
+	userSignerId, err := userId.(string)
+
+	if err  {
+		errRes := helpers.ResponseError("Forbidden Access", "access denied", 403)
+		c.JSON(errRes.StatusCode, errRes)
+		return
+	}
+
+	request := dto.Product{
+		CheckerID: userSignerId,
+	}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		errorRes := helpers.ResponseError("Bad Request", err.Error(), 400)
+		c.JSON(errorRes.StatusCode, errorRes)
+		return
+	}
+
+	response := product.productUsecase.UpdateProductData(request, id)
+	if (response.Status != "ok") {
+		c.JSON(response.StatusCode, response)
+		return
+	}
+	
+	c.JSON(response.StatusCode, response)
+}
+
+func (product *productDelivery) CheckedProduct(c *gin.Context) {
+	id := c.Param("id")
+	userId, _ := c.Get("user_id")
+	userCheckerId, err := userId.(string)
+	
+	if err  {
+		errRes := helpers.ResponseError("Forbidden Access", "access denied", 403)
+		c.JSON(errRes.StatusCode, errRes)
+		return
+	}
+
+	request := dto.Product{
+		CheckerID: userCheckerId,
+	}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		errorRes := helpers.ResponseError("Bad Request", err.Error(), 400)
+		c.JSON(errorRes.StatusCode, errorRes)
+		return
+	}
+
+	response := product.productUsecase.UpdateProductData(request, id)
 	if (response.Status != "ok") {
 		c.JSON(response.StatusCode, response)
 		return

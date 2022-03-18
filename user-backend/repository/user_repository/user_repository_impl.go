@@ -1,6 +1,7 @@
 package user_repository
 
 import (
+	"errors"
 	"fmt"
 	"go-api/helpers"
 	"go-api/models/entity"
@@ -57,13 +58,12 @@ func (repo *userRepository) GetUserById(id string) (*entity.UserDetail, error) {
 	return &user, nil
 }
 
-func (repo *userRepository) CreateNewUser(user entity.User) (*entity.User, *entity.Role, error){
+func (repo *userRepository) CreateNewUser(user entity.User) (*entity.User,  error){
 	role := entity.Role{}
-	
 	
 	result := repo.mysqlConnection.Where("personal_number = ?", user.Personal_number).Find(&user)
 	if (result.RowsAffected > 0)  {
-		return nil, nil, gorm.ErrRegistered
+		return nil,  errors.New("Personal number already registered")
 	}
 
 	user.ID = uuid.New().String()
@@ -71,29 +71,26 @@ func (repo *userRepository) CreateNewUser(user entity.User) (*entity.User, *enti
 	user.Password = hash
 	
 	if err := repo.mysqlConnection.Where("title = ?", "viewer").Find(&role).Error; err != nil {
-		return nil, nil, err
+		return nil,  err
 	}
 
 	user.RoleID = role.ID
 
 	if err := repo.mysqlConnection.Create(&user).Error; err != nil {
-		return nil, nil, err
+		return nil,  err
 	}
 
-	return &user, &role, nil
+	return &user,  nil
 }
 
 func (repo *userRepository) UpdateUserData(user entity.User, id string) (*entity.User, error){
-	hash,_ := helpers.HashPassword(user.Password)
 
-	result:= repo.mysqlConnection.Model(&user).Where("id = ?", id).Updates(map[string]interface{}{
-		"name": user.Name,
-		"password": hash,
-		"role_id": user.RoleID,
-		"active": user.Active,
-		"email": user.Email,
-		"personal_number": user.Personal_number,
-	})
+	checkPN :=  repo.mysqlConnection.Where("personal_number = ?", user.Personal_number).Find(&user)
+	if checkPN.RowsAffected > 0 {
+		return nil, errors.New("Personal number already taken")
+	}
+
+	result:= repo.mysqlConnection.Model(&user).Where("id = ?", id).Updates(&user)
 	
 	if result.RowsAffected == 0 {
 		return nil, gorm.ErrRecordNotFound
@@ -105,8 +102,9 @@ func (repo *userRepository) UpdateUserData(user entity.User, id string) (*entity
 func (repo *userRepository) DeleteUserById(id string) error {
 	sql := "DELETE FROM users"
 	sql = fmt.Sprintf("%s WHERE id = '%s'", sql, id)
-	if err := repo.mysqlConnection.Raw(sql).Scan(entity.User{}).Error; err != nil  {
-		return err
+	result := repo.mysqlConnection.Raw(sql).Scan(entity.User{})
+	if (result.RowsAffected == 0)  {
+		return gorm.ErrRecordNotFound
 	}
 	// if err := repo.mysqlConnection.Delete(&entity.User{}, id).Error; err != nil  {
 	// 	return err

@@ -18,7 +18,7 @@ type CustomClaim struct {
 func (jwtAuth *jwtUsecase) GenerateToken(userId string, roleId string) (string, error) {
 	data, err := jwtAuth.userRepo.GetRoleByRoleId(roleId)
 	if err != nil {
-		return "user not found", err
+		return "User not found", err
 	}
 
 	claim := CustomClaim{
@@ -58,16 +58,27 @@ func (jwtAuth *jwtUsecase) ValidateTokenAndGetUserId(token string) (string, erro
 
 	return claims["user_id"].(string), nil
 }
-func (jwtAuth *jwtUsecase) ValidateTokenAndGetRole(token string) (string, error) {
+
+func (jwtAuth *jwtUsecase) ValidateTokenAndGetRole(token string) (string, string, error) {
 	validatedToken, err := jwtAuth.ValidateToken(token)
 	if err != nil {
-		return "", err
+		return "","", err
 	}
 
 	claims, ok := validatedToken.Claims.(jwt.MapClaims)
 	if !ok {
-		return "", errors.New("failed to claim token")
+		return "","", errors.New("failed to claim token")
+	}
+	userData, err := jwtAuth.userRepo.GetUserById(claims["user_id"].(string))
+
+	if err != nil {
+		return "","", err
 	}
 
-	return claims["user_id"].(string), nil
+	role, err := jwtAuth.userRepo.GetRoleByRoleId( userData.RoleID)
+	if err != nil {
+		return "","", err
+	}
+
+	return claims["user_id"].(string), role.Title, nil
 }

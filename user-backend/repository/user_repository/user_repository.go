@@ -11,7 +11,7 @@ type UserRepository interface {
 	GetRoleByRoleId(string)(*entity.Role, error)
 	GetAllUsers() ([]entity.UserList, error)
 	GetUserById(string) (*entity.UserDetail, error) 
-	CreateNewUser(entity.User) (*entity.User, *entity.Role, error)
+	CreateNewUser(entity.User) (*entity.User,  error)
 	UpdateUserData(entity.User, string) (*entity.User, error) 
 	DeleteUserById( string) error
 }

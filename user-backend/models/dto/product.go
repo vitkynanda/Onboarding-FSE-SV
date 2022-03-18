@@ -2,8 +2,8 @@ package dto
 
 type Product struct {
 	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	Name        string `json:"name" binding:"required"`
+	Description string `json:"description" binding:"required"`
 	Status      string `json:"status"`
 	CreatedAt   string `json:"created_at"`
 	UpdatedAt   string `json:"updated_at"`
