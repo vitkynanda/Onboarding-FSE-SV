@@ -35,24 +35,39 @@ func HandlerRequest() {
 	userDelivery := user_delivery.GetUserDelivery(userUsecase)
 	router := gin.Default()
 
-	router.Use(cors.Default())
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"*"},
+		AllowHeaders:     []string{"*"},
+		ExposeHeaders:    []string{"*"},
+		AllowCredentials: true,
+		// AllowOriginFunc: func(origin string) bool {
+		//   return origin == "https://github.com"
+		// },
+		// MaxAge: 12 * time.Hour,
+	  }))
 
-	protectedRoutes := router.Group("/")
-	protectedRoutes.Use(middleware.JWTAuth(jwtAuth))
+	checkerRoutes := router.Group("/")
+	checkerRoutes.Use(middleware.CheckerAuth(jwtAuth))
 
 	{
-		// protectedRoutes.PUT("/products/:id", productDelivery.UpdateProductData )
-		protectedRoutes.PUT("/products/:id/published", productDelivery.UpdateProductData )
-		protectedRoutes.PUT("/products/:id/checked", productDelivery.UpdateProductData )
+		checkerRoutes.PUT("/products/:id/checked", productDelivery.UpdateProductData )
+	}
+
+	publisherRoutes := router.Group("/")
+	publisherRoutes.Use(middleware.PublisherAuth(jwtAuth))
+
+	{
+		publisherRoutes.PUT("/products/:id/published", productDelivery.UpdateProductData )
 	}
 
 	adminRoutes := router.Group("/")
 	adminRoutes.Use(middleware.AdminAuth(jwtAuth))
 	{
-		protectedRoutes.PUT("/products/:id", productDelivery.UpdateProductData )
-		protectedRoutes.PUT("/users/:id", userDelivery.UpdateUserData )
-		protectedRoutes.DELETE("/products/:id", productDelivery.DeleteProductById )
-		protectedRoutes.DELETE("/users/:id", userDelivery.DeleteUserById )
+		adminRoutes.PUT("/products/:id", productDelivery.UpdateProductData )
+		adminRoutes.PUT("/users/:id", userDelivery.UpdateUserData )
+		adminRoutes.DELETE("/products/:id", productDelivery.DeleteProductById )
+		adminRoutes.DELETE("/users/:id", userDelivery.DeleteUserById )
 	}
 
 	router.GET("/roles", roleDelivery.GetAllRole )	
@@ -63,5 +78,7 @@ func HandlerRequest() {
 	router.GET("/users", userDelivery.GetAllUsers )	
 	router.GET("/users/:id", userDelivery.GetUserById )	
 	router.POST("/users", userDelivery.CreateNewUser )	
+
+	
 	router.Run(":8001")
 }

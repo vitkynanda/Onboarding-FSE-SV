@@ -188,10 +188,9 @@ const TableProduct = () => {
 
   const removeProduct = async (id, actionRef) => {
     const hide = message.loading('Updating data');
-    const options = { method: 'DELETE' };
+    const options = { method: 'DELETE', headers: { Authorization: localStorage.getItem('token') } };
     const response = await fetch(`http://localhost:8001/products/${id}`, options);
     const result = await response.json();
-    console.log(result);
 
     if (result.status === 'ok') {
       hide();

@@ -139,9 +139,11 @@ const TableList = () => {
       render: (_, row) => {
         return (
           <div style={{ display: 'flex' }}>
-            <Button onClick={() => removeUser(row.id, actionRef)}>
-              <DeleteOutlined />
-            </Button>
+            <div style={{ marginRight: 5 }}>
+              <Button onClick={() => removeUser(row.id, actionRef)}>
+                <DeleteOutlined />
+              </Button>
+            </div>
             <Button
               onClick={() => {
                 setUserData(row);
@@ -171,9 +173,9 @@ const TableList = () => {
       }),
     };
 
-    const response = await fetch(`http://localhost:8001/users/${value.id}`, options);
-    const result = await response.json();
-    if (result.status == 'ok') {
+    const response = await request(`http://localhost:8001/users/${value.id}`, options);
+    // const result = await response.json();
+    if (response.status == 'ok') {
       handleModalVisible(false);
 
       if (actionRef.current) {
@@ -183,19 +185,23 @@ const TableList = () => {
   };
 
   const removeUser = async (id, actionRef) => {
-    const hide = message.loading('Updating data');
-    const options = { method: 'DELETE' };
-    const response = await fetch(`http://localhost:8001/users/${id}`, options);
-    const result = await response.json();
-    console.log(result);
+    // const hide = message.loading('Updating data');
+    const options = {
+      method: 'DELETE',
+      headers: { Authorization: `${localStorage.getItem('token')}` },
+      referrerPolicy: 'no-referrer',
+    };
 
-    if (result.status === 'ok') {
-      hide();
-      message.success('Deleted successfully and will refresh soon');
-      actionRef.current.reload();
-    } else {
-      hide();
-      message.error('Delete failed, please try again');
+    try {
+      const response = await request(`http://localhost:8001/users/${id}`, options);
+      if (response.status === 'ok') {
+        message.success('Deleted successfully and will refresh soon');
+        actionRef.current.reload();
+      } else {
+        message.error(response.error);
+      }
+    } catch (err) {
+      message.error(err.message);
     }
   };
 
@@ -222,16 +228,13 @@ const TableList = () => {
         //     <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
         //   </Button>,
         // ]}
-        request={
-          // rule
-          async (params = {}) => {
-            const response = await request('http://localhost:8001/users', {
-              params,
-            });
-            console.log(response);
-            return response;
-          }
-        }
+        request={async (params = {}) => {
+          const response = await request('http://localhost:8001/users', {
+            params,
+          });
+
+          return response;
+        }}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {

@@ -1,13 +1,14 @@
 package middleware
 
 import (
+	"fmt"
 	"go-api/helpers"
 	"go-api/usecase/jwt_usecase"
 
 	"github.com/gin-gonic/gin"
 )
 
-func AdminAuth(jwtUsecase jwt_usecase.JwtUsecase) gin.HandlerFunc {
+func CheckerAuth(jwtUsecase jwt_usecase.JwtUsecase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		
@@ -18,8 +19,8 @@ func AdminAuth(jwtUsecase jwt_usecase.JwtUsecase) gin.HandlerFunc {
 			return
 		}
 	
-
-		if role != "admin" {
+		fmt.Println(role)
+		if (!(role == "admin" || role == "checker")) {
 			resp := helpers.ResponseError("Forbidden Access", "You have no access to do this action", 403)
 			c.AbortWithStatusJSON(resp.StatusCode, resp)
 			return

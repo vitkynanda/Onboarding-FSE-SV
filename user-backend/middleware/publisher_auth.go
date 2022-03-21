@@ -1,18 +1,15 @@
 package middleware
 
 import (
-	"fmt"
 	"go-api/helpers"
 	"go-api/usecase/jwt_usecase"
 
 	"github.com/gin-gonic/gin"
 )
 
-func JWTAuth(jwtUsecase jwt_usecase.JwtUsecase) gin.HandlerFunc {
+func PublisherAuth(jwtUsecase jwt_usecase.JwtUsecase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
-		fmt.Println(authHeader)
-		// userId, err := jwtUsecase.ValidateTokenAndGetUserId(authHeader)
 		
 		userId, role, err := jwtUsecase.ValidateTokenAndGetRole(authHeader)
 		if err != nil {
@@ -20,9 +17,9 @@ func JWTAuth(jwtUsecase jwt_usecase.JwtUsecase) gin.HandlerFunc {
 			c.AbortWithStatusJSON(resp.StatusCode, resp)
 			return
 		}
-		fmt.Println(role)
+		
 
-		if role == "viewer" {
+		if (!(role == "admin" || role == "publihsher")) {
 			resp := helpers.ResponseError("Forbidden Access", "You have no access to do this action", 403)
 			c.AbortWithStatusJSON(resp.StatusCode, resp)
 			return

@@ -1,17 +1,36 @@
 {
 	"info": {
-		"_postman_id": "ecf5be8a-6ac9-4556-912b-f594d4c10b1a",
+		"_postman_id": "e36161b6-2f50-4f65-b34a-d63c080f951b",
 		"name": "Product",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
+		{
+			"name": "Get All Products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8001/products",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
 		{
 			"name": "Get Product By Id",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8001/products/093cf9e0-833d-4ace-8643-6c03323f6e81",
+					"raw": "http://localhost:8001/products/fb69368b-ae6b-4ea3-86f1-88b1b11bacd9",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -19,7 +38,7 @@
 					"port": "8001",
 					"path": [
 						"products",
-						"093cf9e0-833d-4ace-8643-6c03323f6e81"
+						"fb69368b-ae6b-4ea3-86f1-88b1b11bacd9"
 					]
 				}
 			},
@@ -86,32 +105,13 @@
 			"response": []
 		},
 		{
-			"name": "Get All Products",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8001/products",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8001",
-					"path": [
-						"products"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Create New Product",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"product abc\",\r\n    \"description\": \"this is product abc\"\r\n}",
+					"raw": "{\r\n    \"name\": \"Product abc\",\r\n    \"description\": \"This product A\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -136,7 +136,13 @@
 			"name": "Update Product Data",
 			"request": {
 				"method": "PUT",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDc1OTI1MzQsImlhdCI6MTY0NzU4ODkzNCwiaXNzIjoiZnNlIiwicm9sZSI6InZpZXdlciIsInVzZXJfaWQiOiJmZDkwMzVlOS00ODUwLTRkMDYtYjdkMi0xZGM4Njc3NjE3YmEifQ.VVBP9Ms2n6Glcj4DXPIR0fPKnJxppZHz04aUQnirwkc",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n    \"name\": \"product abc\",\r\n    \"description\": \"Test\"\r\n}",
@@ -147,7 +153,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8001/products/0a42603c-2ae4-4017-aceb-a5fec77e7677",
+					"raw": "http://localhost:8001/products/fb69368b-ae6b-4ea3-86f1-88b1b11bacd9",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -155,7 +161,7 @@
 					"port": "8001",
 					"path": [
 						"products",
-						"0a42603c-2ae4-4017-aceb-a5fec77e7677"
+						"fb69368b-ae6b-4ea3-86f1-88b1b11bacd9"
 					]
 				}
 			},
