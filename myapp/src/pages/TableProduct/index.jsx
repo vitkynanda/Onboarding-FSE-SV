@@ -169,30 +169,35 @@ const TableProduct = () => {
 
   const handleEditProduct = async (value) => {
     const { name, description } = value;
-    console.log(value);
+
     const options = {
       method: 'PUT',
       body: JSON.stringify({ name, description }),
+      headers: { Authorization: localStorage.getItem('token') },
     };
 
-    const response = await fetch(`http://localhost:8001/products/${value.id}`, options);
-    const result = await response.json();
-    if (result.status == 'ok') {
-      handleModalVisible(false);
+    try {
+      const response = await request(`http://localhost:8001/products/${value.id}`, options);
 
-      if (actionRef.current) {
-        actionRef.current.reload();
+      if (response.status == 'ok') {
+        handleModalVisible(false);
+        message.success('Product upadated succesfully');
+
+        if (actionRef.current) {
+          actionRef.current.reload();
+        }
       }
+    } catch (error) {
+      message.error(error.data.error);
     }
   };
 
   const removeProduct = async (id, actionRef) => {
     const hide = message.loading('Updating data');
     const options = { method: 'DELETE', headers: { Authorization: localStorage.getItem('token') } };
-    const response = await fetch(`http://localhost:8001/products/${id}`, options);
-    const result = await response.json();
+    const response = await request(`http://localhost:8001/products/${id}`, options);
 
-    if (result.status === 'ok') {
+    if (response.status === 'ok') {
       hide();
       message.success('Deleted successfully and will refresh soon');
       actionRef.current.reload();
@@ -214,24 +219,24 @@ const TableProduct = () => {
         search={{
           labelWidth: 120,
         }}
-        // toolBarRender={() => [
-        //   <Button
-        //     type="primary"
-        //     key="primary"
-        //     onClick={() => {
-        //       handleModalVisible(true);
-        //     }}
-        //   >
-        //     <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
-        //   </Button>,
-        // ]}
+        toolBarRender={() => [
+          <Button
+            type="primary"
+            key="primary"
+            onClick={() => {
+              handleModalVisible(true);
+            }}
+          >
+            <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
+          </Button>,
+        ]}
         request={
           // rule
           async (params = {}) => {
             const response = await request('http://localhost:8001/products', {
               params,
             });
-            console.log(response);
+
             return response;
           }
         }
@@ -335,53 +340,6 @@ const TableProduct = () => {
           label="Description"
         />
       </ModalForm>
-      {/* <UpdateForm
-        onSubmit={async (value) => {
-          const success = await handleUpdate(value);
-
-          if (success) {
-            handleUpdateModalVisible(false);
-            setCurrentRow(undefined);
-
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-          }
-        }}
-        onCancel={() => {
-          handleUpdateModalVisible(false);
-
-          if (!showDetail) {
-            setCurrentRow(undefined);
-          }
-        }}
-        updateModalVisible={updateModalVisible}
-        values={currentRow || {}}
-      />
-
-      <Drawer
-        width={600}
-        visible={showDetail}
-        onClose={() => {
-          setCurrentRow(undefined);
-          setShowDetail(false);
-        }}
-        closable={false}
-      >
-        {currentRow?.name && (
-          <ProDescriptions
-            column={2}
-            title={currentRow?.name}
-            request={async () => ({
-              data: currentRow || {},
-            })}
-            params={{
-              id: currentRow?.name,
-            }}
-            columns={columns}
-          />
-        )}
-      </Drawer> */}
     </PageContainer>
   );
 };

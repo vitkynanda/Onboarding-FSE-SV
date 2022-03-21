@@ -11,7 +11,7 @@ type UserUsecase interface {
 	GetAllUsers() (dto.Response)
 	GetUserById(string) (dto.Response)
 	CreateNewUser(dto.User) (dto.Response)
-	UpdateUserData(dto.User, string) (dto.Response)
+	UpdateUserData(dto.UserUpdate, string) (dto.Response)
 	DeleteUserById(string) (dto.Response)
 }
 

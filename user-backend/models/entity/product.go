@@ -1,16 +1,19 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Product struct {
+	gorm.Model
 	ID          string
 	Name        string
 	Description string
 	Status      string
-	MakerID    string
+	MakerID     string
 	SignerID    string
 	CheckerID   string
-	CreatedAt   time.Time
 	UpdatedAt 	time.Time
-	DeletedAt 	time.Time
 }

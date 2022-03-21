@@ -32,37 +32,25 @@ const Login = () => {
   const { initialState, setInitialState } = useModel('@@initialState');
   const intl = useIntl();
 
-  // const fetchUserInfo = async () => {
-  //   const userInfo = await initialState?.fetchUserInfo?.();
-
-  //   if (userInfo) {
-  //     await setInitialState((s) => ({ ...s, currentUser: userInfo }));
-  //   }
-  // };
-
   const handleSubmit = async (values) => {
     const { personalNumber, password } = values;
     try {
       const msg = await loginSv({ personalNumber, password });
-
       if (msg.status === 'ok') {
-        const defaultLoginSuccessMessage = intl.formatMessage({
-          id: 'pages.login.success',
-          defaultMessage: '登录成功！',
-        });
-        message.success(defaultLoginSuccessMessage);
+        message.success('Login success');
         history.push('/');
-
         localStorage.setItem('token', msg.data.token);
         localStorage.setItem('username', msg.data.name);
+        setUserLoginState(msg);
         return;
+      } else {
+        console.log(msg);
+        message.error(msg.error);
       }
-
-      console.log(msg); // 如果失败去设置用户错误信息
-
-      setUserLoginState(msg);
+      // 如果失败去设置用户错误信息
     } catch (error) {
-      message.error(defaultLoginFailureMessage);
+      console.log(error);
+      message.error(error.data.error);
     }
   };
 
@@ -82,16 +70,6 @@ const Login = () => {
           initialValues={{
             autoLogin: true,
           }}
-          actions={[
-            <FormattedMessage
-              key="loginWith"
-              id="pages.login.loginWith"
-              defaultMessage="其他登录方式"
-            />,
-            <AlipayCircleOutlined key="AlipayCircleOutlined" className={styles.icon} />,
-            <TaobaoCircleOutlined key="TaobaoCircleOutlined" className={styles.icon} />,
-            <WeiboCircleOutlined key="WeiboCircleOutlined" className={styles.icon} />,
-          ]}
           onFinish={async (values) => {
             await handleSubmit(values);
           }}
@@ -174,8 +152,12 @@ const Login = () => {
               style={{
                 float: 'right',
               }}
+              href="/user/register"
             >
-              <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码" />
+              <FormattedMessage
+                id="pages.login.forgotPasswords"
+                defaultMessage="Don't have account ? Register"
+              />
             </a>
           </div>
         </LoginForm>

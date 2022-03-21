@@ -2,7 +2,6 @@ package user_repository
 
 import (
 	"errors"
-	"fmt"
 	"go-api/helpers"
 	"go-api/models/entity"
 
@@ -100,14 +99,11 @@ func (repo *userRepository) UpdateUserData(user entity.User, id string) (*entity
 }
 
 func (repo *userRepository) DeleteUserById(id string) error {
-	sql := "DELETE FROM users"
-	sql = fmt.Sprintf("%s WHERE id = '%s'", sql, id)
-	result := repo.mysqlConnection.Raw(sql).Scan(entity.User{})
-	if (result.RowsAffected == 0)  {
+
+	result := repo.mysqlConnection.Where("id = ?", id).Delete(&entity.User{})
+	
+	if result.RowsAffected == 0 {
 		return gorm.ErrRecordNotFound
 	}
-	// if err := repo.mysqlConnection.Delete(&entity.User{}, id).Error; err != nil  {
-	// 	return err
-	// }
 	return nil
 }

@@ -30,7 +30,6 @@ const loginOut = async () => {
 
 const AvatarDropdown = ({ menu }) => {
   const { initialState, setInitialState } = useModel('@@initialState');
-  console.log(initialState);
 
   const onMenuClick = useCallback((event) => {
     const { key } = event;

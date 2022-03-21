@@ -82,7 +82,7 @@ func (user *userUsecase) CreateNewUser(newUser dto.User) dto.Response {
 		"id": userData.ID}, 201 )
 }
 
-func (user *userUsecase) UpdateUserData(userUpdate dto.User, id string) dto.Response {
+func (user *userUsecase) UpdateUserData(userUpdate dto.UserUpdate, id string) dto.Response {
 
 	if (userUpdate.Password != ""){
 		HashPassword, _ := helpers.HashPassword(userUpdate.Password)
@@ -100,8 +100,6 @@ func (user *userUsecase) UpdateUserData(userUpdate dto.User, id string) dto.Resp
 	
 	_, err := user.userRepo.UpdateUserData(userInsert, id)
 
-	
-	 
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		return helpers.ResponseError("Data not found", err.Error(), 404)
 	} else if err != nil {
@@ -116,7 +114,6 @@ func (user *userUsecase) UpdateUserData(userUpdate dto.User, id string) dto.Resp
 }
 
 func (user *userUsecase) DeleteUserById(id string) dto.Response {
-	
  err := user.userRepo.DeleteUserById(id)
  
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {

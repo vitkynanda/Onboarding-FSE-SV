@@ -73,6 +73,7 @@ func (product *productUsecase) GetProductById(id string) dto.Response {
 }
 
 func (product *productUsecase) CreateNewProduct(newProduct dto.Product) dto.Response {
+
 	userInsert := entity.Product{
 		ID: newProduct.ID,
 		Name: newProduct.Name,
@@ -104,6 +105,7 @@ func (product *productUsecase) UpdateProductData(productUpdate dto.Product, id s
 	}
 	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{"id": id}, 200)
 }
+
 func (product *productUsecase) PublishedProduct(productUpdate dto.Product, id string) dto.Response {
 	productInsert := entity.Product{
 		Name: productUpdate.Name,
@@ -118,6 +120,7 @@ func (product *productUsecase) PublishedProduct(productUpdate dto.Product, id st
 	}
 	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{"id": id}, 200)
 }
+
 func (product *productUsecase) CheckedProduct(productUpdate dto.Product, id string) dto.Response {
 	productInsert := entity.Product{
 		Name: productUpdate.Name,

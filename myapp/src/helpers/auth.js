@@ -6,7 +6,7 @@ const users = () => {
   try {
     if (token !== '') {
       const decode = jwt_decode(`${token}`);
-      console.log(decode);
+
       return {
         isLogin: true,
         userId: decode?.user_id,

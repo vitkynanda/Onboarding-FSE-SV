@@ -31,17 +31,21 @@ export const layout = ({ initialState, setInitialState }) => {
   return {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
-    // waterMarkProps: {
-    //   content: initialState?.currentUser?.name,
-    // },
     footerRender: () => <Footer />,
     onPageChange: () => {
+      const { location } = history; // 如果没有登录，重定向到 login
       if (initialState) {
-        if (!initialState.state.userAuth) {
+        if (
+          !initialState.state.userAuth &&
+          (location.pathname !== loginPath || location.pathname !== registerPath)
+        ) {
           history.push('/user/login');
         }
+      } else {
+        if (users().isLogin) {
+          history.push('/');
+        }
       }
-      const { location } = history; // 如果没有登录，重定向到 login
     },
     links: isDev
       ? [

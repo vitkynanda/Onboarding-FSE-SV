@@ -14,7 +14,7 @@ export default [
           {
             name: 'register',
             path: '/user/register',
-            component: './user/Login',
+            component: './user/Register',
           },
         ],
       },
@@ -50,13 +50,13 @@ export default [
   {
     name: 'list.table-list',
     icon: 'table',
-    path: '/list',
-    component: './TableList',
+    path: '/users',
+    component: './TableUser',
   },
   {
     name: 'Table Product',
     icon: 'table',
-    path: '/product',
+    path: '/products',
     component: './TableProduct',
   },
   {

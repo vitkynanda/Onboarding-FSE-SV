@@ -30,6 +30,7 @@ export async function login(body, options) {
     ...(options || {}),
   });
 }
+
 export async function loginSv(body, options) {
   return request('http://localhost:8001/login', {
     method: 'POST',
@@ -38,6 +39,7 @@ export async function loginSv(body, options) {
     },
     data: body,
     ...(options || {}),
+    skipErrorHandler: true,
   });
 }
 /** 此处后端没有提供注释 GET /api/notices */

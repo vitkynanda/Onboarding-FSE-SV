@@ -1,7 +1,6 @@
 package product_repository
 
 import (
-	"fmt"
 	"go-api/models/entity"
 
 	"github.com/google/uuid"
@@ -89,11 +88,11 @@ func (repo *productRepository) CheckedProduct(product entity.Product, id string)
 }
 
 func (repo *productRepository) DeleteProductById(id string) error {
-		sql := "DELETE FROM products"
-		sql = fmt.Sprintf("%s WHERE id = '%s'", sql, id)
-		if err := repo.mysqlConnection.Raw(sql).Scan(entity.Product{}).Error; err != nil  {
-			return err
-		}
-
+	result := repo.mysqlConnection.Where("id = ?", id).Delete(&entity.Product{})
+	
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	
 	return nil
 }
