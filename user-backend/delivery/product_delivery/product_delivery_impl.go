@@ -1,6 +1,7 @@
 package product_delivery
 
 import (
+	"fmt"
 	"go-api/helpers"
 	"go-api/models/dto"
 	"net/http"
@@ -35,13 +36,25 @@ func (product *productDelivery) GetProductById(c *gin.Context)    {
 
 func (product *productDelivery) CreateNewProduct(c *gin.Context)  {
 	request := dto.Product{}
+	userId, _ := c.Get("user_id")
+	userMakerId, err := userId.(string)
+
+	fmt.Println(userMakerId)
+
+	if err  {
+		errRes := helpers.ResponseError("Forbidden Access", "access denied", 403)
+		c.JSON(errRes.StatusCode, errRes)
+		return
+	}
+
+
 	if err := c.ShouldBindJSON(&request); err != nil {
 		errorRes := helpers.ResponseError("Bad Request", err.Error(), 400  )
 		c.JSON(errorRes.StatusCode, errorRes)
 		return
 
 	}
-	response := product.productUsecase.CreateNewProduct(request)
+	response := product.productUsecase.CreateNewProduct(request, userMakerId)
 
 	if (response.Status != "ok") {
 		c.JSON(response.StatusCode, response)
@@ -73,7 +86,6 @@ func (product *productDelivery) UpdateProductData(c *gin.Context) {
 func (product *productDelivery) PublishedProduct(c *gin.Context) {
 	id := c.Param("id")
 	userId, _ := c.Get("user_id")
-
 	userSignerId, err := userId.(string)
 
 	if err  {

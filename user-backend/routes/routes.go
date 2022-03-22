@@ -41,10 +41,6 @@ func HandlerRequest() {
 		AllowHeaders:     []string{"*"},
 		ExposeHeaders:    []string{"*"},
 		AllowCredentials: true,
-		// AllowOriginFunc: func(origin string) bool {
-		//   return origin == "https://github.com"
-		// },
-		// MaxAge: 12 * time.Hour,
 	  }))
 
 	checkerRoutes := router.Group("/")
@@ -70,10 +66,17 @@ func HandlerRequest() {
 		adminRoutes.DELETE("/users/:id", userDelivery.DeleteUserById )
 	}
 
+	protectedRoutes := router.Group("/")
+	protectedRoutes.Use(middleware.JWTauth(jwtAuth))
+	{
+		router.POST("/products", productDelivery.CreateNewProduct )	
+	}
+	
+
 	router.GET("/roles", roleDelivery.GetAllRole )	
 	router.GET("/products", productDelivery.GetAllProducts )	
 	router.GET("/products/:id", productDelivery.GetProductById )	
-	router.POST("/products", productDelivery.CreateNewProduct )	
+	
 	router.POST("/login", userDelivery.UserLogin )	
 	router.GET("/users", userDelivery.GetAllUsers )	
 	router.GET("/users/:id", userDelivery.GetUserById )	

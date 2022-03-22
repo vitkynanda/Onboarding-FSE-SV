@@ -42,9 +42,9 @@ func (repo *productRepository) GetProductById(id string) (*entity.Product, []ent
 	return &product, users, nil
 }
 
-func (repo *productRepository) CreateNewProduct(product entity.Product) (*entity.Product,  error){
+func (repo *productRepository) CreateNewProduct(product entity.Product, userId string) (*entity.Product,  error){
 	product.ID = uuid.New().String()
-	product.MakerID = "fd9035e9-4850-4d06-b7d2-1dc8677617ba" //example id
+	product.MakerID = userId //example id
 	product.CheckerID = ""
 	product.SignerID = ""
 	

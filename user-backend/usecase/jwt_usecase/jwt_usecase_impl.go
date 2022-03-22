@@ -75,7 +75,7 @@ func (jwtAuth *jwtUsecase) ValidateTokenAndGetRole(token string) (string, string
 		return "","", err
 	}
 
-	role, err := jwtAuth.userRepo.GetRoleByRoleId( userData.RoleID)
+	role, err := jwtAuth.userRepo.GetRoleByRoleId(userData.RoleID)
 	if err != nil {
 		return "","", err
 	}

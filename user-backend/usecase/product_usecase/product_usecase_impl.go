@@ -72,23 +72,23 @@ func (product *productUsecase) GetProductById(id string) dto.Response {
 	return helpers.ResponseSuccess("ok", nil, response, 200)
 }
 
-func (product *productUsecase) CreateNewProduct(newProduct dto.Product) dto.Response {
+func (product *productUsecase) CreateNewProduct(newProduct dto.Product, userId string) dto.Response {
 
-	userInsert := entity.Product{
+	productInsert := entity.Product{
 		ID: newProduct.ID,
 		Name: newProduct.Name,
 		Description: newProduct.Description,
 		Status: "inactive",
 	}
 
-	userData,  err := product.productRepo.CreateNewProduct(userInsert)
+	productData,  err := product.productRepo.CreateNewProduct(productInsert, userId)
 	
 	 if err != nil {
 		return helpers.ResponseError("Internal server error", err, 500)
 	}
 
 	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{
-		"id": userData.ID}, 201 )
+		"id": productData.ID}, 201 )
 }
 
 func (product *productUsecase) UpdateProductData(productUpdate dto.Product, id string) dto.Response {
