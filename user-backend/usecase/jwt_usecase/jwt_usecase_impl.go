@@ -60,6 +60,7 @@ func (jwtAuth *jwtUsecase) ValidateTokenAndGetUserId(token string) (string, erro
 }
 
 func (jwtAuth *jwtUsecase) ValidateTokenAndGetRole(token string) (string, string, error) {
+
 	validatedToken, err := jwtAuth.ValidateToken(token)
 	if err != nil {
 		return "","", err

@@ -43,6 +43,15 @@ func HandlerRequest() {
 		AllowCredentials: true,
 	  }))
 
+
+
+	protectedRoutes := router.Group("/")
+	protectedRoutes.Use(middleware.JWTauth(jwtAuth))
+	{
+		protectedRoutes.POST("/products", productDelivery.CreateNewProduct )	
+	}
+
+
 	checkerRoutes := router.Group("/")
 	checkerRoutes.Use(middleware.CheckerAuth(jwtAuth))
 
@@ -66,22 +75,13 @@ func HandlerRequest() {
 		adminRoutes.DELETE("/users/:id", userDelivery.DeleteUserById )
 	}
 
-	protectedRoutes := router.Group("/")
-	protectedRoutes.Use(middleware.JWTauth(jwtAuth))
-	{
-		router.POST("/products", productDelivery.CreateNewProduct )	
-	}
-	
-
 	router.GET("/roles", roleDelivery.GetAllRole )	
 	router.GET("/products", productDelivery.GetAllProducts )	
 	router.GET("/products/:id", productDelivery.GetProductById )	
-	
 	router.POST("/login", userDelivery.UserLogin )	
 	router.GET("/users", userDelivery.GetAllUsers )	
 	router.GET("/users/:id", userDelivery.GetUserById )	
 	router.POST("/users", userDelivery.CreateNewUser )	
 
-	
 	router.Run(":8001")
-}
+}	

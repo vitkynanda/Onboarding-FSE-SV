@@ -1,40 +1,29 @@
 import { SettingDrawer } from '@ant-design/pro-layout';
 import { PageLoading } from '@ant-design/pro-layout';
-import { history, Link } from 'umi';
+import { history } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
-// import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
-import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import defaultSettings from '../config/defaultSettings';
 import users from './helpers/users';
-const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
-/** 获取用户信息比较慢的时候会展示一个 loading */
+const registerPath = '/user/register';
 
 export const initialStateConfig = {
   loading: <PageLoading />,
 };
-/**
- * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
- * */
 
 export async function getInitialState() {
   const fetchUserInfo = async () => {
     if (users().isLogin) {
       return users();
-    } else {
-      history.push(loginPath);
     }
-    // try {
-    //   const msg = await queryCurrentUser();
-    //   return msg.data;
-    // } catch (error) {
-    //   history.push(loginPath);
-    // }
     return undefined;
-  }; // 如果是登录页面，不执行
+  };
 
-  if (history.location.pathname !== loginPath) {
+  if (history.location.pathname === registerPath) {
+    history.push(registerPath);
+    return;
+  } else if (history.location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
     return {
       fetchUserInfo,
@@ -47,41 +36,29 @@ export async function getInitialState() {
     fetchUserInfo,
     settings: defaultSettings,
   };
-} // ProLayout 支持的api https://procomponents.ant.design/components/layout
+}
 
 export const layout = ({ initialState, setInitialState }) => {
   return {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
-    waterMarkProps: {
-      content: initialState?.currentUser?.name,
-    },
     footerRender: () => <Footer />,
     onPageChange: () => {
-      const { location } = history; // 如果没有登录，重定向到 login
-
-      if (!initialState?.currentUser && location.pathname !== loginPath) {
-        history.push(loginPath);
+      const { location } = history;
+      if (!initialState?.currentUser) {
+        if (location.pathname === registerPath) {
+          return;
+        }
+        if (location.pathname !== loginPath || location.pathname !== registerPath) {
+          history.push(loginPath);
+        }
       }
     },
-    links: isDev
-      ? [
-          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-            <LinkOutlined />
-            <span>OpenAPI 文档</span>
-          </Link>,
-          <Link to="/~docs" key="docs">
-            <BookOutlined />
-            <span>业务组件文档</span>
-          </Link>,
-        ]
-      : [],
+
     menuHeaderRender: undefined,
-    // 自定义 403 页面
-    // unAccessible: <div>unAccessible</div>,
-    // 增加一个 loading 的状态
+
     childrenRender: (children, props) => {
-      // if (initialState?.loading) return <PageLoading />;
+      if (initialState?.loading) return <PageLoading />;
       return (
         <>
           {children}

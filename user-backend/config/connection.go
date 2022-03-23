@@ -26,7 +26,11 @@ func Connect() *gorm.DB {
 		  Colorful:                  false,          // Disable color
 		},
 	  )
-	dsn := "root:db@2012@tcp(127.0.0.1:3306)/user-backend?charset=utf8mb4&parseTime=True&loc=Local"
+	// docker  
+	//  dsn := "root:db@2012@tcp(host.docker.internal:3306)/user-backend?charset=utf8mb4&parseTime=True&loc=Local"
+
+	// local
+	dsn := "root:db@2012@tcp(localhost:3306)/user-backend?charset=utf8mb4&parseTime=True&loc=Local"
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: newLogger})
 	if err != nil {
 		panic("failed to connect database")

@@ -17,7 +17,7 @@ func JWTauth(jwtUsecase jwt_usecase.JwtUsecase) gin.HandlerFunc {
 			c.AbortWithStatusJSON(resp.StatusCode, resp)
 			return
 		}
-	
+
 		if role == "viewer" {
 			resp := helpers.ResponseError("Forbidden Access", "You have no access to do this action", 403)
 			c.AbortWithStatusJSON(resp.StatusCode, resp)
