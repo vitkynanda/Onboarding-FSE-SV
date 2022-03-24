@@ -68,4 +68,10 @@ export default defineConfig({
   mfsu: {},
   webpack5: {},
   exportStatic: {},
+  // extraPostCSSPlugins: [
+  //   require('postcss-import'),
+  //   require('tailwindcss'),
+  //   require('postcss-nested'), // or require('postcss-nesting')
+  //   require('autoprefixer'),
+  // ],
 });

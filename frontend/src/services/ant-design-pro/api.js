@@ -60,6 +60,7 @@ export async function removeUser(id) {
 
 export async function getProductList() {
   return request(`http://localhost:8001/products`, {
+    skipErrorHandler: true,
     method: 'GET',
   });
 }
@@ -67,6 +68,7 @@ export async function getProductList() {
 export async function productDetail(id) {
   return request(`http://localhost:8001/products/${id}`, {
     method: 'GET',
+    skipErrorHandler: true,
   });
 }
 
@@ -81,6 +83,24 @@ export async function createNewProduct(payload) {
 
 export async function updateProduct(id, payload) {
   return request(`http://localhost:8001/products/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+    body: JSON.stringify(payload),
+    skipErrorHandler: true,
+  });
+}
+
+export async function checkProduct(id, payload) {
+  return request(`http://localhost:8001/products/${id}/checked`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
+    body: JSON.stringify(payload),
+    skipErrorHandler: true,
+  });
+}
+
+export async function publishProduct(id, payload) {
+  return request(`http://localhost:8001/products/${id}/published`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('token') },
     body: JSON.stringify(payload),

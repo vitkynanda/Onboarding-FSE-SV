@@ -2,6 +2,7 @@ package product_usecase
 
 import (
 	"errors"
+	"fmt"
 	"go-api/helpers"
 	"go-api/models/dto"
 	"go-api/models/entity"
@@ -72,16 +73,16 @@ func (product *productUsecase) GetProductById(id string) dto.Response {
 	return helpers.ResponseSuccess("ok", nil, response, 200)
 }
 
-func (product *productUsecase) CreateNewProduct(newProduct dto.Product, userId string) dto.Response {
-
+func (product *productUsecase) CreateNewProduct(newProduct dto.Product) dto.Response {
+	fmt.Println(newProduct)
 	productInsert := entity.Product{
-		ID: newProduct.ID,
+		MakerID: newProduct.MakerID,
 		Name: newProduct.Name,
 		Description: newProduct.Description,
 		Status: "inactive",
 	}
 
-	productData,  err := product.productRepo.CreateNewProduct(productInsert, userId)
+	productData,  err := product.productRepo.CreateNewProduct(productInsert)
 	
 	 if err != nil {
 		return helpers.ResponseError("Internal server error", err, 500)
@@ -107,11 +108,14 @@ func (product *productUsecase) UpdateProductData(productUpdate dto.Product, id s
 }
 
 func (product *productUsecase) PublishedProduct(productUpdate dto.Product, id string) dto.Response {
+
+fmt.Printf("%+v", productUpdate)
 	productInsert := entity.Product{
+		SignerID: productUpdate.SignerID,
 		Name: productUpdate.Name,
 		Description: productUpdate.Description,
 	}
-	_, err := product.productRepo.UpdateProductData(productInsert, id)
+	_, err := product.productRepo.PublishedProduct(productInsert, id)
 	 
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		return helpers.ResponseError("Data not found", err, 404)
@@ -123,10 +127,11 @@ func (product *productUsecase) PublishedProduct(productUpdate dto.Product, id st
 
 func (product *productUsecase) CheckedProduct(productUpdate dto.Product, id string) dto.Response {
 	productInsert := entity.Product{
+		CheckerID: productUpdate.CheckerID,
 		Name: productUpdate.Name,
 		Description: productUpdate.Description,
 	}
-	_, err := product.productRepo.UpdateProductData(productInsert, id)
+	_, err := product.productRepo.CheckedProduct(productInsert, id)
 	 
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		return helpers.ResponseError("Data not found", err, 404)

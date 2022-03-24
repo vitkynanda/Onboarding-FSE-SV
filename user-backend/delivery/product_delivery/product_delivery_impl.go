@@ -34,9 +34,12 @@ func (product *productDelivery) GetProductById(c *gin.Context)    {
 }
 
 func (product *productDelivery) CreateNewProduct(c *gin.Context)  {
-	request := dto.Product{}
 	userId, _ := c.Get("user_id")
 	userMakerId, _ := userId.(string)	
+
+	request := dto.Product{
+		MakerID: 	userMakerId,
+	}
 
 	if errBind := c.ShouldBindJSON(&request); errBind != nil {
 		errorRes := helpers.ResponseError("Bad Request", errBind.Error(), 400  )
@@ -44,7 +47,7 @@ func (product *productDelivery) CreateNewProduct(c *gin.Context)  {
 		return
 	}
 
-	response := product.productUsecase.CreateNewProduct(request, userMakerId)
+	response := product.productUsecase.CreateNewProduct(request)
 
 	if (response.Status != "ok") {
 		c.JSON(response.StatusCode, response)
@@ -78,7 +81,7 @@ func (product *productDelivery) PublishedProduct(c *gin.Context) {
 	userSignerId, _ := userId.(string)
 
 	request := dto.Product{
-		CheckerID: userSignerId,
+		SignerID: userSignerId,
 	}
 
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -87,7 +90,7 @@ func (product *productDelivery) PublishedProduct(c *gin.Context) {
 		return
 	}
 
-	response := product.productUsecase.UpdateProductData(request, id)
+	response := product.productUsecase.PublishedProduct(request, id)
 	if (response.Status != "ok") {
 		c.JSON(response.StatusCode, response)
 		return
@@ -111,7 +114,7 @@ func (product *productDelivery) CheckedProduct(c *gin.Context) {
 		return
 	}
 
-	response := product.productUsecase.UpdateProductData(request, id)
+	response := product.productUsecase.CheckedProduct(request, id)
 	if (response.Status != "ok") {
 		c.JSON(response.StatusCode, response)
 		return

@@ -74,7 +74,7 @@ const Register = () => {
             },
           }}
           logo={<img alt="logo" src="/logo.svg" />}
-          title="Ant Design"
+          title="Onboarding FSE"
           subTitle={intl.formatMessage({
             id: 'pages.layouts.userLayout.title',
           })}

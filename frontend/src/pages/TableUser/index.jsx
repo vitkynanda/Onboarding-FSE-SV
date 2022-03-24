@@ -1,97 +1,29 @@
-import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, message, Input, Drawer } from 'antd';
-import { useState, useRef } from 'react';
-import { useIntl, FormattedMessage } from 'umi';
-import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
-import ProTable from '@ant-design/pro-table';
+import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import { Button, message, Drawer } from 'antd';
+import { FormattedMessage } from 'umi';
+import { PageContainer } from '@ant-design/pro-layout';
 import { ModalForm, ProFormSelect, ProFormText } from '@ant-design/pro-form';
+import { getUserList } from '@/services/ant-design-pro/api';
 import ProDescriptions from '@ant-design/pro-descriptions';
-
-import {
-  getUserList,
-  removeUser,
-  updateUser,
-  userDetail,
-  getRole,
-} from '@/services/ant-design-pro/api';
+import ProTable from '@ant-design/pro-table';
+import useTable from '@/hooks/use-table';
 
 const TableUser = () => {
-  const [createModalVisible, handleModalVisible] = useState(false);
-
-  const [showDetail, setShowDetail] = useState(false);
-  const [roleData, setRoleData] = useState([]);
-  const actionRef = useRef();
-  const [currentRow, setCurrentRow] = useState();
-  const [selectedRowsState, setSelectedRows] = useState([]);
-
-  const handleRemoveUser = async (id) => {
-    try {
-      const response = await removeUser(id);
-      if (response.statusCode === 200) {
-        message.success('Deleted successfully');
-        actionRef.current.reload();
-      }
-    } catch (error) {
-      message.error(error?.data?.error);
-    }
-  };
-
-  const handleUpdateUser = async (value) => {
-    const payload = {
-      personalNumber: value.personalNumber ?? '',
-      password: value.pwd ?? '',
-      email: value.email ?? '',
-      name: value.name,
-      active: value.active,
-      role: {
-        id: value.role ?? value.role_id,
-      },
-    };
-
-    try {
-      const response = await updateUser(value.id, payload);
-
-      if (response.statusCode === 200) {
-        message.success('Update user successfully');
-        handleModalVisible(false);
-        if (actionRef.current) {
-          actionRef.current.reload();
-        }
-      }
-    } catch (error) {
-      message.error(error?.data?.error);
-    }
-  };
-
-  const handleUserDetail = async (id) => {
-    try {
-      const response = await userDetail(id);
-      if (response.statusCode === 200) {
-        setShowDetail(true);
-        setCurrentRow(response.data);
-      }
-    } catch (error) {
-      message.error(error?.data?.error);
-    }
-  };
-
-  const getRoleData = async () => {
-    try {
-      const response = await getRole();
-      if (response.statusCode === 200) {
-        setRoleData(
-          response.data.map((role) => {
-            return { value: role.id, label: role.title };
-          }),
-        );
-        handleModalVisible(true);
-      }
-    } catch (error) {
-      message.error(error?.data?.error);
-    }
-  };
-
-  const intl = useIntl();
+  const {
+    handleRemove: handleRemoveUser,
+    handleDetail: handleUserDetail,
+    handleUpdate: handleUpdateUser,
+    getRoleData,
+    setCurrentRow,
+    setShowDetail,
+    handleModalVisible,
+    actionRef,
+    currentRow,
+    showDetail,
+    createModalVisible,
+    intl,
+    roleData,
+  } = useTable('user');
 
   const columns = [
     {
@@ -125,7 +57,6 @@ const TableUser = () => {
         );
       },
     },
-
     {
       title: <FormattedMessage id="pages.userTable.titleStatus" defaultMessage="Role" />,
       dataIndex: 'role',
@@ -142,7 +73,6 @@ const TableUser = () => {
         return <span>{rowData.active ? 'Active' : 'Inactive'}</span>;
       },
     },
-
     {
       title: <FormattedMessage id="pages.userTable.titleOption" defaultMessage="Operating" />,
       dataIndex: 'option',
@@ -179,6 +109,7 @@ const TableUser = () => {
       },
     },
   ];
+
   return (
     <PageContainer>
       <ProTable
@@ -191,58 +122,20 @@ const TableUser = () => {
         search={{
           labelWidth: 120,
         }}
-        request={getUserList}
-        columns={columns}
-        rowSelection={{
-          onChange: (_, selectedRows) => {
-            setSelectedRows(selectedRows);
-          },
-        }}
-      />
-      {/* {selectedRowsState?.length > 0 && (
-        <FooterToolbar
-          extra={
-            <div>
-              <FormattedMessage id="pages.userTable.chosen" defaultMessage="Chosen" />{' '}
-              <a
-                style={{
-                  fontWeight: 600,
-                }}
-              >
-                {selectedRowsState.length}
-              </a>{' '}
-              <FormattedMessage id="pages.userTable.item" defaultMessage="项" />
-              &nbsp;&nbsp;
-              <span>
-                <FormattedMessage
-                  id="pages.userTable.totalServiceCalls"
-                  defaultMessage="Total number of service calls"
-                />{' '}
-                {selectedRowsState.reduce((pre, item) => pre + item.callNo, 0)}{' '}
-                <FormattedMessage id="pages.userTable.tenThousand" defaultMessage="万" />
-              </span>
-            </div>
+        request={async () => {
+          try {
+            const res = await getUserList();
+            if (res.statusCode === 200) {
+              return res;
+            }
+          } catch (e) {
+            message.error(e.data.error);
           }
-        >
-          <Button
-            onClick={async () => {
-              await handleRemove(selectedRowsState);
-              setSelectedRows([]);
-              actionRef.current?.reloadAndRest?.();
-            }}
-          >
-            <FormattedMessage id="pages.userTable.batchDeletion" defaultMessage="Batch deletion" />
-          </Button>
-          <Button type="primary">
-            <FormattedMessage id="pages.userTable.batchApproval" defaultMessage="Batch approval" />
-          </Button>
-        </FooterToolbar>
-      )} */}
-      <ModalForm
-        initialValues={{
-          name: currentRow?.name,
-          active: currentRow?.active,
         }}
+        columns={columns}
+      />
+
+      <ModalForm
         title={intl.formatMessage({
           id: 'pages.userTable.createForm.newRule',
           defaultMessage: 'Edit user',

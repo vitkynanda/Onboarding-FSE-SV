@@ -56,14 +56,14 @@ func HandlerRequest() {
 	checkerRoutes.Use(middleware.CheckerAuth(jwtAuth))
 
 	{
-		checkerRoutes.PUT("/products/:id/checked", productDelivery.UpdateProductData )
+		checkerRoutes.PUT("/products/:id/checked", productDelivery.CheckedProduct )
 	}
 
 	publisherRoutes := router.Group("/")
 	publisherRoutes.Use(middleware.PublisherAuth(jwtAuth))
 
 	{
-		publisherRoutes.PUT("/products/:id/published", productDelivery.UpdateProductData )
+		publisherRoutes.PUT("/products/:id/published", productDelivery.PublishedProduct )
 	}
 
 	adminRoutes := router.Group("/")

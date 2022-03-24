@@ -1,96 +1,36 @@
 import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, message, Drawer } from 'antd';
-import { useState, useRef } from 'react';
-import { useIntl, FormattedMessage } from 'umi';
-import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
-import ProTable from '@ant-design/pro-table';
+import { FormattedMessage } from 'umi';
+import { PageContainer } from '@ant-design/pro-layout';
+import { getProductList } from '@/services/ant-design-pro/api';
 import { ModalForm, ProFormText } from '@ant-design/pro-form';
 import ProDescriptions from '@ant-design/pro-descriptions';
-import {
-  getProductList,
-  productDetail,
-  updateProduct,
-  createNewProduct,
-  removeProduct,
-} from '@/services/ant-design-pro/api';
+import ProTable from '@ant-design/pro-table';
+import useTable from '@/hooks/use-table';
 
 const TableProduct = () => {
-  const [createModalVisible, handleModalVisible] = useState(false);
-  const [showDetail, setShowDetail] = useState(false);
-  const [modalType, setModalType] = useState();
-  const actionRef = useRef();
-  const [currentRow, setCurrentRow] = useState();
-  const [selectedRowsState, setSelectedRows] = useState([]);
-
-  const handleRemoveProduct = async (id) => {
-    try {
-      const response = await removeProduct(id);
-      if (response.statusCode === 200) {
-        message.success('Deleted successfully');
-        actionRef.current.reload();
-      }
-    } catch (error) {
-      message.error(error?.data?.error);
-    }
-  };
-
-  const handleUpdateProduct = async (value) => {
-    const payload = {
-      name: value.name,
-      description: value.description,
-    };
-
-    try {
-      const response = await updateProduct(value.id, payload);
-      if (response.statusCode === 200) {
-        message.success('Update user successfully');
-        handleModalVisible(false);
-        if (actionRef.current) {
-          actionRef.current.reload();
-        }
-      }
-    } catch (error) {
-      message.error(error?.data?.error);
-    }
-  };
-
-  const handleProductDetail = async (id) => {
-    try {
-      const response = await productDetail(id);
-      if (response.statusCode === 200) {
-        setShowDetail(true);
-        setCurrentRow(response.data);
-      }
-    } catch (error) {
-      message.error(error?.data?.error);
-    }
-  };
-
-  const handleCreateProduct = async (value) => {
-    try {
-      const response = await createNewProduct(value);
-      if (response.statusCode === 201) {
-        message.success('Product created successfully');
-        handleModalVisible(false);
-        if (actionRef.current) {
-          actionRef.current.reload();
-        }
-      }
-    } catch (error) {
-      message.error(error?.data?.error);
-    }
-  };
-
-  const intl = useIntl();
+  const {
+    handleRemove: handleRemoveProduct,
+    handleUpdate: handleUpdateProduct,
+    handleCreate: handleCreateProduct,
+    handleDetail: handleProductDetail,
+    handlePublish,
+    handleCheck,
+    handleModalVisible,
+    setCurrentRow,
+    setShowDetail,
+    setModalType,
+    showDetail,
+    currentRow,
+    actionRef,
+    createModalVisible,
+    modalType,
+    intl,
+  } = useTable('product');
 
   const columns = [
     {
-      title: (
-        <FormattedMessage
-          id="pages.productTable.updateForm.ruleName.nameLabel"
-          defaultMessage="ID"
-        />
-      ),
+      title: <FormattedMessage id="pages.productTable.updateForm.product" defaultMessage="ID" />,
       dataIndex: 'id',
       tip: 'The id is the unique key',
       render: (dom) => {
@@ -100,7 +40,7 @@ const TableProduct = () => {
     {
       title: (
         <FormattedMessage
-          id="pages.productTable.updateForm.ruleName.nameLabel"
+          id="pages.productTable.updateForm.product"
           defaultMessage="Product name"
         />
       ),
@@ -118,7 +58,6 @@ const TableProduct = () => {
         );
       },
     },
-
     {
       title: <FormattedMessage id="pages.productTable.titleStatus" defaultMessage="Description" />,
       dataIndex: 'role',
@@ -135,7 +74,6 @@ const TableProduct = () => {
         return <span>{rowData.status}</span>;
       },
     },
-
     {
       title: <FormattedMessage id="pages.productTable.titleOption" defaultMessage="Operating" />,
       dataIndex: 'option',
@@ -173,6 +111,7 @@ const TableProduct = () => {
       },
     },
   ];
+
   return (
     <PageContainer>
       <ProTable
@@ -190,84 +129,81 @@ const TableProduct = () => {
             type="primary"
             key="primary"
             onClick={() => {
-              setCurrentRow(undefined);
-              setModalType('add');
+              setCurrentRow({});
+              setModalType('create');
               handleModalVisible(true);
             }}
           >
             <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
           </Button>,
         ]}
-        request={getProductList}
-        columns={columns}
-        rowSelection={{
-          onChange: (_, selectedRows) => {
-            setSelectedRows(selectedRows);
-          },
-        }}
-      />
-      {/* {selectedRowsState?.length > 0 && (
-        <FooterToolbar
-          extra={
-            <div>
-              <FormattedMessage id="pages.productTable.chosen" defaultMessage="Chosen" />{' '}
-              <a
-                style={{
-                  fontWeight: 600,
-                }}
-              >
-                {selectedRowsState.length}
-              </a>{' '}
-              <FormattedMessage id="pages.productTable.item" defaultMessage="项" />
-              &nbsp;&nbsp;
-              <span>
-                <FormattedMessage
-                  id="pages.productTable.totalServiceCalls"
-                  defaultMessage="Total number of service calls"
-                />{' '}
-                {selectedRowsState.reduce((pre, item) => pre + item.callNo, 0)}{' '}
-                <FormattedMessage id="pages.productTable.tenThousand" defaultMessage="万" />
-              </span>
-            </div>
+        request={async () => {
+          try {
+            const res = await getProductList();
+            if (res.statusCode === 200) {
+              return res;
+            }
+          } catch (error) {
+            message.error(error.data.error);
           }
-        >
-          <Button
-            onClick={async () => {
-              await handleRemove(selectedRowsState);
-              setSelectedRows([]);
-              actionRef.current?.reloadAndRest?.();
-            }}
-          >
-            <FormattedMessage
-              id="pages.productTable.batchDeletion"
-              defaultMessage="Batch deletion"
-            />
-          </Button>
-          <Button type="primary">
-            <FormattedMessage
-              id="pages.productTable.batchApproval"
-              defaultMessage="Batch approval"
-            />
-          </Button>
-        </FooterToolbar>
-      )} */}
-      <ModalForm
-        initialValues={{
-          name: currentRow?.name,
-          description: currentRow?.description,
         }}
+        columns={columns}
+      />
+
+      <ModalForm
         title={intl.formatMessage({
-          id: 'pages.productTable.createForm.newRule',
+          id: 'pages.productTable.createForm.user',
           defaultMessage: modalType === 'edit' ? 'Edit Product' : 'Create Product',
         })}
         width="400px"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
-        onFinish={(value) =>
-          modalType === 'edit'
-            ? handleUpdateProduct({ ...value, id: currentRow.id })
-            : handleCreateProduct(value)
-        }
+        onFinish={(value) => {
+          switch (modalType) {
+            case 'edit':
+              handleUpdateProduct({ ...value, id: currentRow.id });
+              break;
+            case 'publish':
+              handlePublish({ ...value, id: currentRow.id });
+              break;
+            case 'check':
+              handleCheck({ ...value, id: currentRow.id });
+              break;
+            case 'create':
+              handleCreateProduct(value);
+          }
+        }}
+        submitter={{
+          render: (props) => {
+            return modalType === 'edit' ? (
+              <div id="actions" style={{ display: 'flex' }}>
+                <button
+                  onClick={() => {
+                    setModalType('check');
+                    props.form?.submit?.();
+                  }}
+                >
+                  Checked
+                </button>
+                <button
+                  onClick={() => {
+                    setModalType('publish');
+                    props.form?.submit?.();
+                  }}
+                >
+                  Published
+                </button>
+                <button onClick={() => props.form?.submit?.()}>Submit</button>
+              </div>
+            ) : (
+              <div>
+                <button type="submit" onClick={() => props.form?.submit?.()}>
+                  Submit
+                </button>
+              </div>
+            );
+          },
+        }}
       >
         <ProFormText width="md" name="name" placeholder="Name" label="Name" />
         <ProFormText width="md" name="description" placeholder="Description" label="Description" />
