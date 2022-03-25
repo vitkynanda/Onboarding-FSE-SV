@@ -44,7 +44,6 @@ const Login = () => {
     const { personalNumber, password } = values;
     try {
       const res = await loginSv({ personalNumber, password });
-
       if (res.status === 'ok') {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('username', res.data.name);
@@ -64,12 +63,7 @@ const Login = () => {
 
       setUserLoginState(msg);
     } catch (error) {
-      console.log(error);
-      const defaultLoginFailureMessage = intl.formatMessage({
-        id: 'pages.login.failure',
-        defaultMessage: '登录失败，请重试！',
-      });
-      message.error(defaultLoginFailureMessage);
+      message.error(error.data.error);
     }
   };
 
@@ -121,7 +115,7 @@ const Login = () => {
                 }}
                 placeholder={intl.formatMessage({
                   id: 'pages.login.username.placeholder',
-                  defaultMessage: '用户名: admin or user',
+                  defaultMessage: 'Personal Number',
                 })}
                 rules={[
                   {
@@ -129,7 +123,7 @@ const Login = () => {
                     message: (
                       <FormattedMessage
                         id="pages.login.username.required"
-                        defaultMessage="请输入用户名!"
+                        defaultMessage="Personal Number required"
                       />
                     ),
                   },
@@ -143,7 +137,7 @@ const Login = () => {
                 }}
                 placeholder={intl.formatMessage({
                   id: 'pages.login.password.placeholder',
-                  defaultMessage: '密码: ant.design',
+                  defaultMessage: 'Password',
                 })}
                 rules={[
                   {
@@ -151,7 +145,7 @@ const Login = () => {
                     message: (
                       <FormattedMessage
                         id="pages.login.password.required"
-                        defaultMessage="请输入密码！"
+                        defaultMessage="Password required"
                       />
                     ),
                   },

@@ -70,6 +70,7 @@ func (jwtAuth *jwtUsecase) ValidateTokenAndGetRole(token string) (string, string
 	if !ok {
 		return "","", errors.New("failed to claim token")
 	}
+
 	userData, err := jwtAuth.userRepo.GetUserById(claims["user_id"].(string))
 
 	if err != nil {
@@ -83,3 +84,34 @@ func (jwtAuth *jwtUsecase) ValidateTokenAndGetRole(token string) (string, string
 
 	return claims["user_id"].(string), role.Title, nil
 }
+func (jwtAuth *jwtUsecase) CheckProductData(id string, actionType string) ( error) {
+
+	productData, _, err := jwtAuth.productRepo.GetProductById(id)
+
+	if err != nil {
+		return  err
+	}
+
+
+
+	if (actionType == "signer" && productData.CheckerID == "") {
+		return  errors.New("This product need to be checked before signing")
+	}
+
+	if (actionType == "signer" && productData.SignerID == "") {
+		return  nil
+	}
+
+	if (productData.SignerID != "" && productData.CheckerID != "" ) {
+		return  errors.New("This product has been checked and signed")
+	}
+
+	if (productData.CheckerID != "") {
+		return  errors.New("This product has been checked")
+	}
+
+	return  nil
+}
+
+
+

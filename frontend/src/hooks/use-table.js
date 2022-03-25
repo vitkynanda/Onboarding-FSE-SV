@@ -1,7 +1,7 @@
 import {
+  createNewProduct,
   updateProduct,
   updateUser,
-  createNewProduct,
   removeProduct,
   removeUser,
   userDetail,
@@ -68,6 +68,7 @@ const useTable = (type) => {
       }
     } catch (error) {
       message.error(error?.data?.error);
+      handleModalVisible(false);
     }
   };
 
@@ -96,11 +97,12 @@ const useTable = (type) => {
         }
       }
     } catch (error) {
+      handleModalVisible(false);
       message.error(error?.data?.error);
     }
   };
 
-  // Function user
+  // Function User
   const getRoleData = async () => {
     try {
       const response = await getRole();
@@ -134,6 +136,7 @@ const useTable = (type) => {
         }
       }
     } catch (error) {
+      handleModalVisible(false);
       message.error(error?.data?.error);
     }
   };
@@ -154,6 +157,7 @@ const useTable = (type) => {
         }
       }
     } catch (error) {
+      handleModalVisible(false);
       message.error(error?.data?.error);
     }
   };

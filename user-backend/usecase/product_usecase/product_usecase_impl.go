@@ -97,6 +97,7 @@ func (product *productUsecase) UpdateProductData(productUpdate dto.Product, id s
 		Name: productUpdate.Name,
 		Description: productUpdate.Description,
 	}
+
 	_, err := product.productRepo.UpdateProductData(productInsert, id)
 	 
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
@@ -104,6 +105,11 @@ func (product *productUsecase) UpdateProductData(productUpdate dto.Product, id s
 	} else if err != nil {
 		return helpers.ResponseError("Internal server error", err, 500)
 	}
+
+	// if (productData.SignerID != "" || productData.CheckerID != "" ) {
+	// 	return helpers.ResponseError("Forbidden access", errors.New("You cannot update this product because it is already checked or signed"), 403)
+	// }
+
 	return helpers.ResponseSuccess("ok", nil, map[string]interface{}{"id": id}, 200)
 }
 

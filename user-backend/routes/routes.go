@@ -30,7 +30,7 @@ func HandlerRequest() {
 	productUsecase := product_usecase.GetProductUsecase(productRepository)
 	productDelivery := product_delivery.GetProductDelivery(productUsecase)
 	userRepository := user_repository.GetUserRepository(connection)
-	jwtAuth := jwt_usecase.GetJwtUsecase(userRepository)
+	jwtAuth := jwt_usecase.GetJwtUsecase(userRepository, productRepository)
 	userUsecase := user_usecase.GetUserUsecase(userRepository, jwtAuth)
 	userDelivery := user_delivery.GetUserDelivery(userUsecase)
 	router := gin.Default()
@@ -75,13 +75,14 @@ func HandlerRequest() {
 		adminRoutes.DELETE("/users/:id", userDelivery.DeleteUserById )
 	}
 
-	router.GET("/roles", roleDelivery.GetAllRole )	
-	router.GET("/products", productDelivery.GetAllProducts )	
-	router.GET("/products/:id", productDelivery.GetProductById )	
 	router.POST("/login", userDelivery.UserLogin )	
 	router.GET("/users", userDelivery.GetAllUsers )	
 	router.GET("/users/:id", userDelivery.GetUserById )	
 	router.POST("/users", userDelivery.CreateNewUser )	
+	router.GET("/roles", roleDelivery.GetAllRole )	
+	router.GET("/products", productDelivery.GetAllProducts )	
+	router.GET("/products/:id", productDelivery.GetProductById )	
+	
 
 	router.Run(":8001")
 }	
