@@ -1,7 +1,7 @@
 package product_usecase
 
 import (
-	"go-api/helpers"
+	"errors"
 	"go-api/models/dto"
 	"go-api/models/entity"
 	"go-api/repository/product_repository"
@@ -11,61 +11,119 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-var productRepository = &product_repository.ProductRepositoryMock{Mock : mock.Mock{}}
-var productUse = GetProductUsecaseTest(productRepository)
-func TestGetAllProduct(t *testing.T) {
-	products := []entity.Product{}
-	response := dto.Response{StatusCode: 200, Status: "ok", Error: nil, Data: products,}
+var productRepository = product_repository.ProductRepositoryMock{Mock : mock.Mock{}}
+var productUc =	ProductUcaseTest{productRepo: &productRepository}
 
-	result := helpers.ResponseSuccess(response.Status, response.Error, response.Data,  response.StatusCode)
-	productRepository.Mock.On("GetAllProducts").Return(products, nil)
-	res := productUse.GetAllProducts()
-	assert.Equal(t, result, res)
+
+func TestGetAllProductsSuccess(t *testing.T) {
+	expected := []entity.Product{}
+	productRepository.Mock.On("GetAllProducts").Return(expected, nil)
+	result, err := productUc.productRepo.GetAllProducts()
+
+	assert.Equal(t, expected, result)
+	assert.NotNil(t, result)
+	assert.Nil(t, err)
+
 }
 
-func TestGetProductById(t *testing.T){
-	product := entity.Product{}
-	response := dto.Response{StatusCode: 200, Status: "ok", Error: nil, Data: product,}
+func TestGetProductByIdNotFound(t *testing.T) {
+	productRepository.Mock.On("GetProductById", "1").Return(nil, errors.New("Data not found"))
 
-	result := helpers.ResponseSuccess(response.Status, response.Error, response.Data,  response.StatusCode)
-	productRepository.Mock.On("GetProductById", "1").Return(product, nil)
-	res := productUse.GetProductById("1")
-	assert.Equal(t, result, res)
-	assert.Nil(t, res.Error)
-	assert.NotNil(t, res.Data)
-}
-func TestUpdateProductData(t *testing.T){
-	product := entity.Product{ID : "1"}
-	response := dto.Response{StatusCode: 200, Status: "ok", Error: nil, Data: map[string]interface{}{"id": product.ID},}
-
-	result := helpers.ResponseSuccess(response.Status, response.Error, response.Data,  response.StatusCode)
-	productRepository.Mock.On("UpdateProductData", "1").Return(product, nil)
-	res := productUse.UpdateProductData("1")
-	assert.Equal(t, result, res)
-	assert.Nil(t, res.Error)
-	assert.NotNil(t, res.Data)
+	result, err := productUc.productRepo.GetProductById("1")
+	assert.Nil(t, result)
+	assert.NotNil(t, err)
+	
 }
 
-func TestDeleteProductById(t *testing.T){
-	product := entity.Product{ID: "1"}
-	response := dto.Response{StatusCode: 200, Status: "ok", Error: nil, Data: map[string]interface{}{"id": product.ID},}
+func TestGetProductByIdSuccess(t *testing.T) {
+	expected := &entity.Product{}
 
-	result := helpers.ResponseSuccess(response.Status, response.Error, response.Data,  response.StatusCode)
-	productRepository.Mock.On("DeleteProductById", "1").Return(product, nil)
-	res := productUse.DeleteProductById("1")
-	assert.Equal(t, result, res)
-	assert.Nil(t, res.Error)
-	assert.NotNil(t, res.Data)
-}
-func TestCreateNewProduct(t *testing.T){
-	product := entity.Product{}
-	response := dto.Response{StatusCode: 200, Status: "ok", Error: nil, Data: product,}
+	productRepository.Mock.On("GetProductById", "2").Return(expected, nil)
 
-	result := helpers.ResponseSuccess(response.Status, response.Error, response.Data,  response.StatusCode)
-	productRepository.Mock.On("CreateNewProduct").Return(product, nil)
-	res := productUse.CreateNewProduct(dto.Product{ID: "1", Name: "Product 1",  Description: "Product 1",})
-	assert.Equal(t, result, res)
-	assert.Nil(t, res.Error)
-	assert.NotNil(t, res.Data)
+	result, err := productUc.productRepo.GetProductById("2")
+
+	assert.Equal(t, expected, result)
+	assert.NotNil(t, result)
+	assert.Nil(t, err)
+	
 }
 
+func TestUpdateProductNotFound(t *testing.T) {
+	productRepository.Mock.On("GetProductById", "1").Return(nil, errors.New("Data not found"))
+
+	result, err := productUc.productRepo.GetProductById("1")
+	assert.Nil(t, result)
+	assert.NotNil(t, err)
+	
+}
+
+func TestUpdateProductSuccess(t *testing.T) {
+	expected := &entity.Product{}
+
+	productRepository.Mock.On("UpdateProductData", "2").Return(expected, nil)
+
+	result, err := productUc.productRepo.UpdateProductData("2")
+
+	assert.Equal(t, expected, result)
+	assert.NotNil(t, result)
+	assert.Nil(t, err)
+	
+}
+
+func TestCreateNewProductSuccess(t *testing.T) {
+	request := dto.Product{
+		Name: "New Product",
+		Description: "Test New Product",
+	}
+
+	expected := &entity.Product{}
+	
+	productRepository.Mock.On("CreateNewProduct").Return(expected, nil)
+
+	result, err := productUc.productRepo.CreateNewProduct(request)
+
+	assert.Equal(t, expected, result)
+	assert.NotNil(t, result)
+	assert.Nil(t, err)
+	
+}
+
+func TestCreateNewProductSFailed(t *testing.T) {
+	request := dto.Product{
+		Name: "New Product",
+		Description: "Test New Product",
+	}
+
+	expected := &entity.Product{}
+	
+	productRepository.Mock.On("CreateNewProduct").Return(nil, errors.New("Failed create product"))
+
+	result, err := productUc.productRepo.CreateNewProduct(request)
+
+	assert.NotEqual(t, expected, result)
+	assert.NotNil(t, err)
+	assert.Nil(t, result)
+	
+}
+
+func TestDeleteProductFailed(t *testing.T) {
+	productRepository.Mock.On("DeleteProductById", "1").Return(nil, errors.New("Data not found"))
+
+	result, err := productUc.productRepo.DeleteProductById("1")
+	assert.Nil(t, result)
+	assert.NotNil(t, err)
+	
+}
+
+func TestDeleteProductSuccess(t *testing.T) {
+	expected := &entity.Product{}
+
+	productRepository.Mock.On("DeleteProductById", "2").Return(expected, nil)
+
+	result, err := productUc.productRepo.DeleteProductById("2")
+
+	assert.Equal(t, expected, result)
+	assert.NotNil(t, result)
+	assert.Nil(t, err)
+	
+}

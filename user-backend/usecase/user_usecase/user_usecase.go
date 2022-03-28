@@ -20,6 +20,10 @@ type userUsecase struct {
 	jwtAuth jwt_usecase.JwtUsecase
 }
 
+type UserUsecaseTest struct {
+	userRepo *user_repository.UserRepositoryMock
+}
+
 func GetUserUsecase(userRepository user_repository.UserRepository, jwtAuthentication jwt_usecase.JwtUsecase)  UserUsecase {
 	return &userUsecase{
 		userRepo: userRepository,

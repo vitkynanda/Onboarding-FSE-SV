@@ -18,6 +18,9 @@ type UserDelivery interface {
 type userDelivery struct {
 	usecase user_usecase.UserUsecase
 }
+type UserDeliveryTest struct {
+	userUsecase *user_usecase.UserUsecaseMock
+}
 
 func GetUserDelivery(userUsecase user_usecase.UserUsecase) UserDelivery {
 	return &userDelivery{
