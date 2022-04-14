@@ -13,6 +13,47 @@ import (
 var userUsecase = user_usecase.UserUsecaseMock{Mock : mock.Mock{}}
 var userDel = UserDeliveryTest{userUsecase: &userUsecase}
 
+
+func TestUserLoginSuccess(t *testing.T) {
+	reqData:= dto.UserLogin{
+		PersonalNumber: "123123",
+		Password: "321456",
+	}
+
+	expected := dto.Response{
+		StatusCode: 200,
+		Status:     "ok",
+		Error:      nil,
+		Data:       map[string]interface{}{"token": "token"},
+	}
+
+	userDel.userUsecase.Mock.On("UserLogin").Return(expected)
+	result := userUsecase.UserLogin(reqData)
+
+	assert.Equal(t, expected, result)
+	assert.NotNil(t, result.Data)
+	assert.Nil(t, result.Error)
+}
+func TestUserLoginFailed(t *testing.T) {
+	reqData:= dto.UserLogin{
+		PersonalNumber: "123123",
+		Password: "123345",
+	}
+
+	expected := dto.Response{
+		StatusCode: 200,
+		Status:     "ok",
+		Error:      nil,
+		Data:       map[string]interface{}{"token": "token"},
+	}
+
+	userDel.userUsecase.Mock.On("UserLogin").Return(expected)
+	result := userUsecase.UserLogin(reqData)
+
+	assert.NotEqual(t, expected, result)
+	assert.Nil(t, result.Data)
+	assert.NotNil(t, result.Error)
+}
 func TestGetAllUsersSuccess(t *testing.T) { 
 
 	expected := dto.Response{
@@ -31,7 +72,6 @@ func TestGetAllUsersSuccess(t *testing.T) {
 	assert.NotNil(t, result.Data)
 }
 
-
 func TestGetProductByIdSuccess(t *testing.T) { 
 
 	expected := dto.Response{
@@ -49,7 +89,6 @@ func TestGetProductByIdSuccess(t *testing.T) {
 	assert.Nil(t,  result.Error)
 	assert.NotNil(t, result.Data)
 }
-
 
 func TestGetProductByIdNotFound(t *testing.T) { 
 	expected := dto.Response{
@@ -85,6 +124,7 @@ func TestDeleteProductSuccess(t *testing.T) {
 	assert.Nil(t,  result.Error)
 	assert.NotNil(t, result.Data)
 }
+
 func TestDeleteProductFailed(t *testing.T) { 
 
 	expected := dto.Response{

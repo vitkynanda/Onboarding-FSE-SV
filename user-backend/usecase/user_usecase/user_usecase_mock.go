@@ -73,3 +73,21 @@ func (user *UserUsecaseMock) CreateNewUser(userData dto.User) dto.Response {
 	response := arguments.Get(0).(dto.Response)
 	return helpers.ResponseSuccess(response.Status, response.Error, response.Data, response.StatusCode)
 }
+func (user *UserUsecaseMock) UserLogin(userData dto.UserLogin) dto.Response { 
+	userRegistered := dto.UserLogin{
+		PersonalNumber : "123123",
+		Password: "321456",
+	}
+	arguments := user.Mock.Called()
+	if arguments.Get(0) == nil {
+		return  helpers.ResponseError("Internal Server Error", errors.New("Failed to get user"), 500)
+	}
+
+	if (userRegistered.PersonalNumber != userData.PersonalNumber) || (userRegistered.Password != userData.Password) {
+		return  helpers.ResponseError("Data not found", errors.New("Personal number or password is incorrect"), 404)
+	}
+	
+
+	response := arguments.Get(0).(dto.Response)
+	return helpers.ResponseSuccess(response.Status, response.Error, response.Data, response.StatusCode)
+}

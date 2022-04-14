@@ -23,7 +23,6 @@ func TestGetAllUsersSuccess(t *testing.T) {
 	assert.Equal(t, expected, result)
 	assert.NotNil(t, result)
 	assert.Nil(t, err)
-
 }
 
 func TestGetUserByIdNotFound(t *testing.T) {
